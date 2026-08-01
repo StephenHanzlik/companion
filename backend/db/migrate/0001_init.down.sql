@@ -1,0 +1,10 @@
+DROP TABLE IF EXISTS debriefs;
+DROP TABLE IF EXISTS snow_profile_tests;
+DROP TABLE IF EXISTS observations;
+DROP TABLE IF EXISTS plans;
+DROP TABLE IF EXISTS trip_members;
+DROP TABLE IF EXISTS trips;
+DROP TABLE IF EXISTS users;
+DROP TYPE IF EXISTS snow_test_type;
+DROP TYPE IF EXISTS observation_type;
+DROP TYPE IF EXISTS trip_status;

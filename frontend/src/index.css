@@ -1,0 +1,115 @@
+:root {
+  color-scheme: light dark;
+  font-family: system-ui, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: #f5f6f4;
+  color: #1a1f1a;
+}
+
+#root {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+h1, h2, h3 {
+  font-weight: 600;
+}
+
+.card {
+  background: white;
+  border: 1px solid #d9ddd7;
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1rem;
+}
+
+.row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.tabs {
+  display: flex;
+  gap: 0.25rem;
+  margin-bottom: 1rem;
+}
+
+.tabs button {
+  padding: 0.5rem 1rem;
+  border: 1px solid #d9ddd7;
+  background: #eceee9;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.tabs button.active {
+  background: #2f5d3a;
+  color: white;
+  border-color: #2f5d3a;
+}
+
+button {
+  font: inherit;
+}
+
+button.primary {
+  background: #2f5d3a;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+}
+
+input, textarea, select {
+  font: inherit;
+  padding: 0.4rem 0.5rem;
+  border: 1px solid #c7ccc4;
+  border-radius: 4px;
+  width: 100%;
+}
+
+label {
+  display: block;
+  font-size: 0.85rem;
+  margin-bottom: 0.25rem;
+  color: #4a4f49;
+}
+
+.field {
+  margin-bottom: 0.75rem;
+}
+
+.list-item {
+  border-bottom: 1px solid #e5e8e2;
+  padding: 0.5rem 0;
+}
+
+.list-item:last-child {
+  border-bottom: none;
+}
+
+.muted {
+  color: #6b6f66;
+  font-size: 0.85rem;
+}
+
+.back-link {
+  cursor: pointer;
+  color: #2f5d3a;
+  background: none;
+  border: none;
+  padding: 0;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+}
