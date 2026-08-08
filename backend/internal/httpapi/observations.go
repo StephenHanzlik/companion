@@ -7,7 +7,7 @@ import (
 
 	"github.com/jackc/pgx/v5/pgtype"
 
-	"observer/internal/db"
+	"companion/internal/db"
 )
 
 var validObservationTypes = map[string]bool{

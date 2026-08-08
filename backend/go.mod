@@ -1,4 +1,4 @@
-module observer
+module companion
 
 go 1.23
 

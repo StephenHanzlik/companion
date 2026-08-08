@@ -10,10 +10,10 @@ import (
 
 	"github.com/jackc/pgx/v5/pgxpool"
 
-	"observer/internal/config"
-	"observer/internal/db"
-	"observer/internal/httpapi"
-	"observer/internal/weather"
+	"companion/internal/config"
+	"companion/internal/db"
+	"companion/internal/httpapi"
+	"companion/internal/weather"
 )
 
 func main() {
@@ -38,7 +38,7 @@ func main() {
 	}
 
 	go func() {
-		log.Printf("observer backend listening on :%s", cfg.Port)
+		log.Printf("companion backend listening on :%s", cfg.Port)
 		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			log.Fatalf("server error: %v", err)
 		}

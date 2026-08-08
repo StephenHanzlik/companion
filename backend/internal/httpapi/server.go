@@ -6,8 +6,8 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 
-	"observer/internal/db"
-	"observer/internal/weather"
+	"companion/internal/db"
+	"companion/internal/weather"
 )
 
 type Server struct {

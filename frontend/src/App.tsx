@@ -11,7 +11,7 @@ export default function App() {
 
   return (
     <>
-      <h1>Observer</h1>
+      <h1>Companion</h1>
       <p className="muted">Backcountry trip companion — Plan, Ride, Debrief.</p>
 
       <div className="tabs">

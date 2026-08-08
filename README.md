@@ -1,4 +1,4 @@
-# Observer
+# Companion
 
 A backcountry trip companion: **Plan** (prepare), **Ride** (record observations and
 snow profile tests in the field), **Debrief** (summarize, reflect, submit). Personal
@@ -35,7 +35,7 @@ make up      # builds and starts postgres, migrate, seed, backend, frontend
 
 - Backend: http://localhost:8080 (health check: `GET /healthz`)
 - Frontend: http://localhost:5173
-- Postgres: localhost:5432 (user/pass/db: `observer`/`observer`/`observer`)
+- Postgres: localhost:5432 (user/pass/db: `companion`/`companion`/`companion`)
 
 ```sh
 make down    # stop and remove containers + the postgres volume

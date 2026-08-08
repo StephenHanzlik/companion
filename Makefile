@@ -1,6 +1,6 @@
 .PHONY: up down build sqlc test logs dev-db dev-db-down dev-sqlc dev-backend dev-frontend dev-test
 
-DEV_DATABASE_URL := postgres://observer:observer@localhost:5432/observer?sslmode=disable
+DEV_DATABASE_URL := postgres://companion:companion@localhost:5432/companion?sslmode=disable
 
 ## --- Full stack in Docker (no local Go/Node/sqlc needed) -------------------
 

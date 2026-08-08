@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"observer/internal/weather"
+	"companion/internal/weather"
 )
 
 func (s *Server) getWeather(w http.ResponseWriter, r *http.Request) {

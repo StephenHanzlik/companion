@@ -14,7 +14,7 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 	tcpostgres "github.com/testcontainers/testcontainers-go/modules/postgres"
 
-	"observer/internal/db"
+	"companion/internal/db"
 )
 
 func setupTestDB(t *testing.T) *db.Queries {
@@ -22,9 +22,9 @@ func setupTestDB(t *testing.T) *db.Queries {
 	ctx := context.Background()
 
 	container, err := tcpostgres.Run(ctx, "postgres:16-alpine",
-		tcpostgres.WithDatabase("observer_test"),
-		tcpostgres.WithUsername("observer"),
-		tcpostgres.WithPassword("observer"),
+		tcpostgres.WithDatabase("companion_test"),
+		tcpostgres.WithUsername("companion"),
+		tcpostgres.WithPassword("companion"),
 		tcpostgres.BasicWaitStrategies(),
 	)
 	if err != nil {

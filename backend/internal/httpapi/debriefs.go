@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"observer/internal/db"
+	"companion/internal/db"
 )
 
 type upsertDebriefRequest struct {
