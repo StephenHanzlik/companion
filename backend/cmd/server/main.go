@@ -18,6 +18,7 @@ import (
 
 func main() {
 	cfg := config.Load()
+	log.Printf("startup: port=%q database_url_len=%d weather_user_agent_len=%d", cfg.Port, len(cfg.DatabaseURL), len(cfg.WeatherUserAgent))
 
 	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	defer stop()
@@ -27,6 +28,11 @@ func main() {
 		log.Fatalf("connect to database: %v", err)
 	}
 	defer pool.Close()
+
+	if err := pool.Ping(ctx); err != nil {
+		log.Fatalf("ping database: %v", err)
+	}
+	log.Println("startup: database ping ok")
 
 	queries := db.New(pool)
 	weatherClient := weather.NewClient(cfg.WeatherUserAgent)

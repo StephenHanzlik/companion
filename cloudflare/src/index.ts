@@ -10,6 +10,17 @@ export class BackendContainer extends Container {
   sleepAfter = '10m'
   enableInternet = true
   pingEndpoint = '/healthz'
+
+  // Single entry point for starting with secrets -- setting this.envVars then
+  // calling startAndWaitForPorts() means exactly one start() ever fires
+  // (its own internal one). Calling start() explicitly first, then
+  // startAndWaitForPorts() separately (which also calls start() internally),
+  // risked two concurrent start attempts both binding :8080 in the same
+  // container -- the loser crashing with "address already in use" (exit 1).
+  async startWithEnv(envVars: Record<string, string>): Promise<void> {
+    this.envVars = envVars
+    await this.startAndWaitForPorts()
+  }
 }
 
 interface Env {
@@ -25,16 +36,11 @@ export default {
 
     // DATABASE_URL/WEATHER_USER_AGENT are Worker secrets, only readable here
     // at request time -- passed into the container's process env on start.
-    // start() is idempotent if already running; startAndWaitForPorts() then
-    // just waits for the port without re-issuing a start with default envVars.
-    await container.start({
-      envVars: {
-        PORT: '8080',
-        DATABASE_URL: env.DATABASE_URL,
-        WEATHER_USER_AGENT: env.WEATHER_USER_AGENT,
-      },
+    await container.startWithEnv({
+      PORT: '8080',
+      DATABASE_URL: env.DATABASE_URL,
+      WEATHER_USER_AGENT: env.WEATHER_USER_AGENT,
     })
-    await container.startAndWaitForPorts()
 
     return container.fetch(request)
   },
