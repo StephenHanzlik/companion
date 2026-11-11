@@ -237,6 +237,12 @@ label {
     justify-content: flex-end;
   }
 
+  /* Nav moves to the top of the photo on phones so it clears the CTA button. */
+  .landing-nav {
+    top: 1rem;
+    bottom: auto;
+  }
+
   .landing-phases {
     flex-direction: column;
     padding: 2rem 1rem;
