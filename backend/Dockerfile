@@ -19,7 +19,12 @@ COPY . .
 RUN go mod tidy
 RUN CGO_ENABLED=0 go build -o /out/server ./cmd/server
 
-FROM gcr.io/distroless/static-debian12
+# Alpine rather than distroless: costs a few MB, but keeps a shell available
+# for `wrangler containers exec`/ssh debugging in production -- distroless's
+# total lack of one made a real incident much harder to diagnose than it
+# needed to be.
+FROM alpine:3.20
+RUN apk add --no-cache ca-certificates
 COPY --from=build /out/server /server
 EXPOSE 8080
 ENTRYPOINT ["/server"]
