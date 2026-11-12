@@ -311,3 +311,21 @@ label {
   color: #1a1f1a;
   border-color: white;
 }
+
+/* Trips page: form and list side by side; stacks on narrow screens. */
+.trips-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+  gap: 1rem;
+  align-items: start;
+}
+
+.trips-layout > .card {
+  margin-bottom: 0;
+}
+
+@media (max-width: 720px) {
+  .trips-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
