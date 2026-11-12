@@ -395,3 +395,271 @@ label {
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+/* Plan page: folded sections, help text, group and avalanche tables. */
+.plan-form {
+  margin-bottom: 1rem;
+}
+
+.plan-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.plan-header h3 {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.plan-date {
+  margin: 0;
+  width: auto;
+}
+
+.plan-date input {
+  width: auto;
+}
+
+.plan-notice {
+  font-size: 0.85rem;
+  color: #2f5d3a;
+  background: #eef4ec;
+  border-radius: 6px;
+  padding: 0.5rem 0.75rem;
+}
+
+.plan-section {
+  border-top: 1px solid #e5e8e2;
+  padding: 0.75rem 0;
+}
+
+.plan-section > summary {
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding: 0.25rem 0;
+}
+
+.plan-section > summary::-webkit-details-marker {
+  display: none;
+}
+
+.plan-section > summary::before {
+  content: '▸';
+  float: right;
+  color: #6b6f66;
+  transition: transform 150ms ease;
+}
+
+.plan-section[open] > summary::before {
+  transform: rotate(90deg);
+}
+
+.plan-section-title {
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.plan-section-rule {
+  font-size: 0.85rem;
+  color: #6b6f66;
+  font-style: italic;
+}
+
+.plan-section-body {
+  padding-top: 0.75rem;
+}
+
+.plan-subhead {
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #6b6f66;
+  margin: 1rem 0 0.5rem;
+}
+
+.plan-help {
+  margin: 0.15rem 0 0.35rem;
+  font-size: 0.8rem;
+  color: #6b6f66;
+}
+
+.plan-table input {
+  min-width: 7rem;
+}
+
+.plan-table td {
+  vertical-align: top;
+}
+
+.plan-table th {
+  white-space: nowrap;
+}
+
+.plan-rank {
+  font-weight: 600;
+  color: #6b6f66;
+}
+
+.plan-row-actions {
+  white-space: nowrap;
+}
+
+.plan-link {
+  background: none;
+  border: none;
+  padding: 0;
+  color: #9a3b3b;
+  cursor: pointer;
+  font-size: 0.8rem;
+}
+
+.plan-add {
+  margin-top: 0.5rem;
+  background: none;
+  border: 1px dashed #c7ccc4;
+  border-radius: 6px;
+  padding: 0.35rem 0.75rem;
+  color: #2f5d3a;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.plan-checklist {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.plan-checklist > li {
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #eef0eb;
+}
+
+.plan-checklist > li:last-child {
+  border-bottom: none;
+}
+
+.plan-check {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+  color: #1a1f1a;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.plan-check input[type='checkbox'],
+.plan-check input[type='radio'] {
+  width: auto;
+  margin: 0;
+}
+
+.plan-note {
+  margin-top: 0.35rem;
+  font-size: 0.85rem;
+}
+
+.aspect-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.2rem;
+  min-width: 12rem;
+}
+
+.aspect {
+  padding: 0.15rem 0.4rem;
+  font-size: 0.72rem;
+  border: 1px solid #c7ccc4;
+  border-radius: 999px;
+  background: #fff;
+  color: #3d4339;
+  cursor: pointer;
+}
+
+.aspect.on {
+  background: #2f5d3a;
+  border-color: #2f5d3a;
+  color: #fff;
+}
+
+.mindset-options {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.plan-actions {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e5e8e2;
+}
+
+/* Plan page: guidance folds, mindset descriptions, turnaround row. */
+.plan-guide {
+  margin: 0.2rem 0 0.4rem;
+  font-size: 0.8rem;
+  color: #5b6259;
+}
+
+.plan-guide > summary {
+  cursor: pointer;
+  color: #2f5d3a;
+  width: max-content;
+}
+
+.plan-guide-body {
+  padding: 0.35rem 0 0 0.9rem;
+  line-height: 1.5;
+}
+
+.plan-guide-body ul {
+  margin: 0.25rem 0;
+  padding-left: 1rem;
+}
+
+.plan-check.mindset {
+  align-items: flex-start;
+  padding: 0.5rem 0.65rem;
+  border: 1px solid #e3e6df;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.plan-check.mindset > span {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.mindset-desc {
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: #5b6259;
+}
+
+.plan-footnote {
+  margin: 0.4rem 0 0;
+  font-size: 0.75rem;
+  color: #6b6f66;
+}
+
+.plan-two-col {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+  gap: 0.75rem;
+}
+
+.plan-closing {
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e5e8e2;
+}
