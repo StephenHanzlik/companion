@@ -60,7 +60,7 @@ export default function TripsList({ onSelectTrip }: { onSelectTrip: (tripId: str
         <form onSubmit={handleCreate}>
           <div className="field">
             <label>Title</label>
-            <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Northwest Couloirs" />
+            <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Name your trip" />
           </div>
           <div className="field">
             <label>State</label>
