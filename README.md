@@ -65,7 +65,7 @@ of everything you create.
 
 ```
 User
-Trip (owner, party, zone, status: planning → active → debriefed)
+Trip (owner, party, state, status: planning → active → debriefed)
  ├── Plan (1:1)            — objectives, route, forecasts, hazards, checklist, sign-off
  ├── Observation (1:many)  — timestamped field notes: weather/terrain/avalanche/red flag
  ├── SnowProfileTest (1:many) — CT/ECT/PST/pit profile; structured core + JSONB results

@@ -19,7 +19,7 @@ func tripIDFromRequest(r *http.Request) (uuid.UUID, error) {
 type createTripRequest struct {
 	OwnerID   string  `json:"owner_id"`
 	Title     string  `json:"title"`
-	Zone      *string `json:"zone"`
+	State     string  `json:"state"` // two-letter US state code, e.g. "CO"
 	StartDate *string `json:"start_date"` // YYYY-MM-DD
 	EndDate   *string `json:"end_date"`   // YYYY-MM-DD
 }
@@ -45,6 +45,10 @@ func (s *Server) createTrip(w http.ResponseWriter, r *http.Request) {
 		writeError(w, http.StatusBadRequest, "title is required")
 		return
 	}
+	if !usStates[req.State] {
+		writeError(w, http.StatusBadRequest, "state must be a two-letter US state code")
+		return
+	}
 	ownerID, err := uuid.Parse(req.OwnerID)
 	if err != nil {
 		writeError(w, http.StatusBadRequest, "invalid owner_id")
@@ -64,7 +68,7 @@ func (s *Server) createTrip(w http.ResponseWriter, r *http.Request) {
 	trip, err := s.q.CreateTrip(r.Context(), db.CreateTripParams{
 		OwnerID:   ownerID,
 		Title:     req.Title,
-		Zone:      req.Zone,
+		State:     &req.State,
 		StartDate: startDate,
 		EndDate:   endDate,
 	})

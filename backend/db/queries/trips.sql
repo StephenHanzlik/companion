@@ -1,5 +1,5 @@
 -- name: CreateTrip :one
-INSERT INTO trips (owner_id, title, zone, start_date, end_date)
+INSERT INTO trips (owner_id, title, state, start_date, end_date)
 VALUES ($1, $2, $3, $4, $5)
 RETURNING *;
 

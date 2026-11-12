@@ -1,13 +1,14 @@
 import { FormEvent, useEffect, useState } from 'react'
 import { api } from '../api/client'
 import type { Trip } from '../api/types'
+import { US_STATES, stateName } from '../api/states'
 
 export default function TripsList({ onSelectTrip }: { onSelectTrip: (tripId: string) => void }) {
   const [trips, setTrips] = useState<Trip[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [title, setTitle] = useState('')
-  const [zone, setZone] = useState('')
+  const [state, setState] = useState('')
 
   function reload() {
     setLoading(true)
@@ -22,11 +23,11 @@ export default function TripsList({ onSelectTrip }: { onSelectTrip: (tripId: str
 
   async function handleCreate(e: FormEvent) {
     e.preventDefault()
-    if (!title.trim()) return
+    if (!title.trim() || !state) return
     try {
-      await api.createTrip({ title, zone: zone || undefined })
+      await api.createTrip({ title, state })
       setTitle('')
-      setZone('')
+      setState('')
       reload()
     } catch (e) {
       setError(String(e))
@@ -43,10 +44,17 @@ export default function TripsList({ onSelectTrip }: { onSelectTrip: (tripId: str
             <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Northwest Couloirs" />
           </div>
           <div className="field">
-            <label>Zone</label>
-            <input value={zone} onChange={(e) => setZone(e.target.value)} placeholder="e.g. Wasatch Central" />
+            <label>State</label>
+            <select value={state} onChange={(e) => setState(e.target.value)} required>
+              <option value="">Select a state…</option>
+              {US_STATES.map(([code, name]) => (
+                <option key={code} value={code}>
+                  {name}
+                </option>
+              ))}
+            </select>
           </div>
-          <button className="primary" type="submit">
+          <button className="primary" type="submit" disabled={!title.trim() || !state}>
             Create trip
           </button>
         </form>
@@ -63,7 +71,7 @@ export default function TripsList({ onSelectTrip }: { onSelectTrip: (tripId: str
               <div>
                 <strong>{trip.title}</strong>{' '}
                 <span className="muted">
-                  {trip.zone ?? 'no zone set'} · {trip.status}
+                  {stateName(trip.state) ?? 'no state set'} · {trip.status}
                 </span>
               </div>
               <button className="primary" onClick={() => onSelectTrip(trip.id)}>

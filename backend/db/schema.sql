@@ -18,7 +18,14 @@ CREATE TABLE trips (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     owner_id UUID NOT NULL REFERENCES users(id),
     title TEXT NOT NULL,
-    zone TEXT,
+    state CHAR(2)
+        CHECK (state IN (
+            'AL','AK','AZ','AR','CA','CO','CT','DE','FL','GA',
+            'HI','ID','IL','IN','IA','KS','KY','LA','ME','MD',
+            'MA','MI','MN','MS','MO','MT','NE','NV','NH','NJ',
+            'NM','NY','NC','ND','OH','OK','OR','PA','RI','SC',
+            'SD','TN','TX','UT','VT','VA','WA','WV','WI','WY'
+        )),
     status trip_status NOT NULL DEFAULT 'planning',
     start_date DATE,
     end_date DATE,
