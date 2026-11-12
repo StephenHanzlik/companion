@@ -38,6 +38,7 @@ const stages = [
   },
   {
     id: 'ride',
+    flip: true,
     eyebrow: '02 · Ride',
     headline: 'Record what you see in the field',
     points: [
@@ -117,7 +118,7 @@ export default function Landing({ onGetStarted, nav }: Props) {
 
       {/* One horizontal band per phase. Plan first; Ride and Debrief to follow. */}
       {stages.map((s) => (
-        <article key={s.id} className="landing-stage">
+        <article key={s.id} className={s.flip ? 'landing-stage flip' : 'landing-stage'}>
           <div className="landing-stage-text">
             <p className="landing-stage-eyebrow">{s.eyebrow}</p>
             <h3>{s.headline}</h3>

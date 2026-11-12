@@ -728,3 +728,10 @@ label {
     padding: 2.5rem 1.25rem;
   }
 }
+
+/* Landing: alternate stage bands so the image sits on the left for Ride. */
+@media (min-width: 721px) {
+  .landing-stage.flip .landing-stage-shot {
+    order: -1;
+  }
+}
