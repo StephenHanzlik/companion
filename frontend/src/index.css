@@ -663,3 +663,75 @@ label {
   padding-top: 1rem;
   border-top: 1px solid #e5e8e2;
 }
+
+/* Landing: stage bands under the phase cards (text left, preview right). */
+.landing-stage {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr);
+  align-items: center;
+  gap: clamp(1.5rem, 4vw, 3.5rem);
+  padding: clamp(2.5rem, 6vw, 4rem) clamp(1.5rem, 6vw, 5rem);
+  border-top: 1px solid #e3e6df;
+}
+
+.landing-stage-eyebrow {
+  margin: 0 0 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #2f5d3a;
+}
+
+.landing-stage-text h3 {
+  margin: 0 0 1rem;
+  font-size: clamp(1.5rem, 3vw, 2.1rem);
+  font-weight: 600;
+  letter-spacing: -0.015em;
+}
+
+.landing-stage-text ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.landing-stage-text li {
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #e3e6df;
+  font-size: 0.95rem;
+  color: #3d4339;
+}
+
+.landing-stage-text li:last-child {
+  border-bottom: none;
+}
+
+.landing-stage-shot {
+  margin: 0;
+  background: #fff;
+  border: 1px solid #d9ddd7;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 24px 48px -32px rgba(21, 32, 26, 0.45);
+}
+
+.landing-stage-shot img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+@media (max-width: 720px) {
+  .landing-stage {
+    grid-template-columns: minmax(0, 1fr);
+    padding: 2.5rem 1.25rem;
+  }
+}
+
+/* Landing: alternate stage bands so the image sits on the left for Ride. */
+@media (min-width: 721px) {
+  .landing-stage.flip .landing-stage-shot {
+    order: -1;
+  }
+}

@@ -20,6 +20,49 @@ const phases = [
   },
 ]
 
+// Stage bands below the phase cards. Headlines only; the screenshots show the
+// real pages. Trips is deliberately not previewed.
+const stages = [
+  {
+    id: 'plan',
+    eyebrow: '01 · Plan',
+    headline: 'Prepare before you leave',
+    points: [
+      'Assemble your group',
+      'Anticipate the hazard',
+      'Manage avalanche terrain',
+      'Plan your emergency',
+    ],
+    image: '/images/preview-plan.png',
+    alt: 'The Plan your trip form, showing the avalanche problems table',
+  },
+  {
+    id: 'ride',
+    flip: true,
+    eyebrow: '02 · Ride',
+    headline: 'Record what you see in the field',
+    points: [
+      'Timestamped field observations',
+      'Snow profile tests',
+    ],
+    image: '/images/preview-ride.png',
+    alt: 'The Ride tab with observations and an add snow profile test form',
+  },
+  {
+    id: 'debrief',
+    eyebrow: '03 · Debrief',
+    headline: 'Reflect and learn from the trip',
+    points: [
+      'Summarize the trip',
+      'Reflect on decisions',
+      'Capture lessons learned',
+      'Submit when done',
+    ],
+    image: '/images/preview-debrief.png',
+    alt: 'The Debrief tab with summary and lessons learned fields',
+  },
+]
+
 export default function Landing({ onGetStarted, nav }: Props) {
   return (
     <section className="landing">
@@ -72,6 +115,24 @@ export default function Landing({ onGetStarted, nav }: Props) {
           </div>
         ))}
       </div>
+
+      {/* One horizontal band per phase. Plan first; Ride and Debrief to follow. */}
+      {stages.map((s) => (
+        <article key={s.id} className={s.flip ? 'landing-stage flip' : 'landing-stage'}>
+          <div className="landing-stage-text">
+            <p className="landing-stage-eyebrow">{s.eyebrow}</p>
+            <h3>{s.headline}</h3>
+            <ul>
+              {s.points.map((pt) => (
+                <li key={pt}>{pt}</li>
+              ))}
+            </ul>
+          </div>
+          <figure className="landing-stage-shot">
+            <img src={s.image} alt={s.alt} loading="lazy" />
+          </figure>
+        </article>
+      ))}
     </section>
   )
 }
