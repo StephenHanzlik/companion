@@ -76,6 +76,11 @@ input, textarea, select {
   padding: 0.4rem 0.5rem;
   border: 1px solid #c7ccc4;
   border-radius: 4px;
+  /* Set explicitly: with color-scheme: dark the browser otherwise paints
+     form fields dark grey on dark-mode systems. */
+  background: #fff;
+  color: #1a1f1a;
+  color-scheme: light;
   width: 100%;
 }
 
