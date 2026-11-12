@@ -9,6 +9,11 @@ export default function TripsList({ onSelectTrip }: { onSelectTrip: (tripId: str
   const [error, setError] = useState<string | null>(null)
   const [title, setTitle] = useState('')
   const [state, setState] = useState('')
+  const [startDate, setStartDate] = useState('')
+  const [endDate, setEndDate] = useState('')
+
+  // Dates are optional, but an end date can't come before the start date.
+  const datesValid = !startDate || !endDate || endDate >= startDate
 
   function reload() {
     setLoading(true)
@@ -23,11 +28,18 @@ export default function TripsList({ onSelectTrip }: { onSelectTrip: (tripId: str
 
   async function handleCreate(e: FormEvent) {
     e.preventDefault()
-    if (!title.trim() || !state) return
+    if (!title.trim() || !state || !datesValid) return
     try {
-      await api.createTrip({ title, state })
+      await api.createTrip({
+        title,
+        state,
+        start_date: startDate || undefined,
+        end_date: endDate || undefined,
+      })
       setTitle('')
       setState('')
+      setStartDate('')
+      setEndDate('')
       reload()
     } catch (e) {
       setError(String(e))
@@ -54,7 +66,21 @@ export default function TripsList({ onSelectTrip }: { onSelectTrip: (tripId: str
               ))}
             </select>
           </div>
-          <button className="primary" type="submit" disabled={!title.trim() || !state}>
+          <div className="field">
+            <label>Start date</label>
+            <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
+          </div>
+          <div className="field">
+            <label>End date</label>
+            <input
+              type="date"
+              value={endDate}
+              min={startDate || undefined}
+              onChange={(e) => setEndDate(e.target.value)}
+            />
+            {!datesValid && <p style={{ color: 'crimson', margin: '0.25rem 0 0' }}>End date can't be before start date.</p>}
+          </div>
+          <button className="primary" type="submit" disabled={!title.trim() || !state || !datesValid}>
             Create trip
           </button>
         </form>
