@@ -35,13 +35,60 @@ export interface AvalancheProblem {
   danger_trend_timing: string
 }
 
-// TODO: the three mindset options come from the guidance page, which hasn't
-// been provided yet. Replace these labels with the real wording.
+// Terrain mindset: pick a value, then describe the terrain choice. Wording is
+// from the guidance page.
 export const TERRAIN_MINDSETS = [
-  { value: 'mindset_1', label: 'Mindset option 1 (to confirm)' },
-  { value: 'mindset_2', label: 'Mindset option 2 (to confirm)' },
-  { value: 'mindset_3', label: 'Mindset option 3 (to confirm)' },
+  {
+    value: 'keep_it_simple',
+    label: 'Keep it simple and avoid avalanche terrain',
+    description:
+      'Low-angle or mostly forested terrain. No exposure; many options to reduce or remove exposure. If needed, cross runout zones one at a time.',
+  },
+  {
+    value: 'limit_exposure',
+    label: 'Limit exposure',
+    description:
+      'Avoid the obvious paths, steepest slopes, and trigger zones. Example: enter slopes below start zones or low in the track; if unsure, avoid avalanche terrain. Watch for terrain traps, mid-slope start zones, overhead cornices, and less obvious slopes. Needs experience and careful route finding.',
+  },
+  {
+    value: 'step_it_out_cautiously',
+    label: 'Step it out cautiously',
+    description:
+      'Lower risk by choosing terrain with less consequence. For days with low or no chance of avalanches. Terrain can be steep, open, and complex with many avalanche slopes; few options exist to reduce exposure.',
+  },
 ] as const
+
+export const TERRAIN_EXPOSURE_FOOTNOTE =
+  'Based on the Avalanche Terrain Exposure Scale (Parks Canada).'
+
+export const GEAR_ITEMS = [
+  { key: 'food_water_layers', label: 'Food, water, warm layers' },
+  { key: 'sos_device', label: 'SOS device (cell or satellite) and emergency numbers' },
+  { key: 'evacuation_kit', label: 'Kit for evacuation and overnight emergency' },
+  { key: 'first_aid', label: 'First aid kit' },
+  { key: 'repair_kit', label: 'Repair and tool kit' },
+  { key: 'navigation', label: 'Navigation tools' },
+] as const
+
+export type GearKey = (typeof GEAR_ITEMS)[number]['key']
+
+export interface GearItem {
+  checked: boolean
+  // Name of the group member carrying the item, chosen from the group list.
+  carried_by: string
+}
+
+// Step C summary checklist, attached to section 3.
+export const STEP_C_ITEMS = [
+  { key: 'route_recorded', label: "Agree on and record today's route" },
+  { key: 'avoid_defined', label: 'Define slopes or areas to avoid' },
+  { key: 'stops_noted', label: 'Note where you will stop, check in, and reassess' },
+  { key: 'precautions', label: 'Discuss precautions and travel protocols for your terrain choices' },
+  { key: 'alternative', label: 'Pick a realistic, less exposed alternative route' },
+  { key: 'turnaround', label: 'Note turnaround point and time' },
+] as const
+
+export type StepCKey = (typeof STEP_C_ITEMS)[number]['key']
 
 export interface PlanningForm {
   date: string
@@ -54,6 +101,12 @@ export interface PlanningForm {
   avoid_areas: string
   route: string
   alternative_route: string
+  turnaround_point: string
+  turnaround_time: string
+  step_c_checks: Record<StepCKey, boolean>
+  itinerary_shared_with: string
+  gear: Record<GearKey, GearItem>
+  confidence_statement: string
 }
 
 export const emptyMember = (): GroupMember => ({ name: '', contact: '', emergency_contact: '' })
@@ -80,4 +133,12 @@ export const emptyPlanningForm = (): PlanningForm => ({
   avoid_areas: '',
   route: '',
   alternative_route: '',
+  turnaround_point: '',
+  turnaround_time: '',
+  step_c_checks: Object.fromEntries(STEP_C_ITEMS.map((c) => [c.key, false])) as Record<StepCKey, boolean>,
+  itinerary_shared_with: '',
+  gear: Object.fromEntries(
+    GEAR_ITEMS.map((g) => [g.key, { checked: false, carried_by: '' }]),
+  ) as Record<GearKey, GearItem>,
+  confidence_statement: '',
 })

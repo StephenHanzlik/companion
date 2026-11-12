@@ -602,3 +602,64 @@ label {
   padding-top: 1rem;
   border-top: 1px solid #e5e8e2;
 }
+
+/* Plan page: guidance folds, mindset descriptions, turnaround row. */
+.plan-guide {
+  margin: 0.2rem 0 0.4rem;
+  font-size: 0.8rem;
+  color: #5b6259;
+}
+
+.plan-guide > summary {
+  cursor: pointer;
+  color: #2f5d3a;
+  width: max-content;
+}
+
+.plan-guide-body {
+  padding: 0.35rem 0 0 0.9rem;
+  line-height: 1.5;
+}
+
+.plan-guide-body ul {
+  margin: 0.25rem 0;
+  padding-left: 1rem;
+}
+
+.plan-check.mindset {
+  align-items: flex-start;
+  padding: 0.5rem 0.65rem;
+  border: 1px solid #e3e6df;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.plan-check.mindset > span {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.mindset-desc {
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: #5b6259;
+}
+
+.plan-footnote {
+  margin: 0.4rem 0 0;
+  font-size: 0.75rem;
+  color: #6b6f66;
+}
+
+.plan-two-col {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+  gap: 0.75rem;
+}
+
+.plan-closing {
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e5e8e2;
+}

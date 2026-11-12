@@ -2,10 +2,15 @@ import { FormEvent, useState } from 'react'
 import {
   ASPECTS,
   AvalancheProblem,
+  GEAR_ITEMS,
   GROUP_CHECKS,
+  GearKey,
   GroupCheckKey,
   GroupMember,
   PlanningForm,
+  STEP_C_ITEMS,
+  StepCKey,
+  TERRAIN_EXPOSURE_FOOTNOTE,
   TERRAIN_MINDSETS,
   emptyMember,
   emptyPlanningForm,
@@ -17,6 +22,16 @@ import {
 
 function Help({ children }: { children: React.ReactNode }) {
   return <p className="plan-help">{children}</p>
+}
+
+// Guidance from the field book, folded under the field it belongs to.
+function Guide({ title = 'Guidance', children }: { title?: string; children: React.ReactNode }) {
+  return (
+    <details className="plan-guide">
+      <summary>{title}</summary>
+      <div className="plan-guide-body">{children}</div>
+    </details>
+  )
 }
 
 function Section({
@@ -80,6 +95,19 @@ export default function PlanTab(_props: { tripId: string }) {
     update('avalanche_problems', form.avalanche_problems.filter((_, idx) => idx !== i))
   }
 
+  // Step C summary checklist
+  function setStepC(key: StepCKey, checked: boolean) {
+    update('step_c_checks', { ...form.step_c_checks, [key]: checked })
+  }
+
+  // Emergency gear
+  function setGear(key: GearKey, patch: Partial<PlanningForm['gear'][GearKey]>) {
+    update('gear', { ...form.gear, [key]: { ...form.gear[key], ...patch } })
+  }
+
+  // Names of group members, for the "carried by" selects.
+  const memberNames = form.group.map((m) => m.name.trim()).filter((n) => n.length > 0)
+
   function handleSave(e: FormEvent) {
     e.preventDefault()
     setNotice('Saved for this session only. Saving to the trip is not wired up yet.')
@@ -99,6 +127,7 @@ export default function PlanTab(_props: { tripId: string }) {
           <input type="date" value={form.date} onChange={(e) => update('date', e.target.value)} />
         </div>
       </div>
+
       {notice && <p className="plan-notice">{notice}</p>}
 
       {/* 1. Assemble your group */}
@@ -274,9 +303,17 @@ export default function PlanTab(_props: { tripId: string }) {
       >
         <div className="field">
           <label>Today's terrain mindset</label>
+          <Help>Pick a terrain mindset based on exposure.</Help>
+          <Guide>
+            <ul>
+              <li>When danger is elevated, choose less exposed terrain.</li>
+              <li>When terrain or conditions are unfamiliar, or the group is unsure, choose less exposed terrain.</li>
+              <li>Think about going with an expert who can manage current conditions and more complex terrain.</li>
+            </ul>
+          </Guide>
           <div className="mindset-options">
             {TERRAIN_MINDSETS.map((opt) => (
-              <label key={opt.value} className="plan-check">
+              <label key={opt.value} className="plan-check mindset">
                 <input
                   type="radio"
                   name="terrain_mindset"
@@ -284,25 +321,127 @@ export default function PlanTab(_props: { tripId: string }) {
                   checked={form.terrain_mindset === opt.value}
                   onChange={() => update('terrain_mindset', opt.value)}
                 />
-                <span>{opt.label}</span>
+                <span>
+                  <strong>{opt.label}</strong>
+                  <span className="mindset-desc">{opt.description}</span>
+                </span>
               </label>
             ))}
           </div>
+          <p className="plan-footnote">{TERRAIN_EXPOSURE_FOOTNOTE}</p>
         </div>
+
         <div className="field">
           <label>Slopes and areas to avoid</label>
           <textarea rows={2} value={form.avoid_areas} onChange={(e) => update('avoid_areas', e.target.value)} />
         </div>
+
         <div className="field">
           <label>Route, with check-in stops</label>
           <Help>Note important precautions on the route.</Help>
+          <Guide title="Guidance: discuss route options">
+            <p>Discuss route options for today's group, weather, and avalanche concerns.</p>
+            <ul>
+              <li>Use maps, photos, and guidebooks to find avalanche slopes on the route.</li>
+              <li>Find terrain with less exposure and less consequence.</li>
+              <li>Think about your time plan in relation to the hazard.</li>
+            </ul>
+          </Guide>
           <textarea rows={3} value={form.route} onChange={(e) => update('route', e.target.value)} />
         </div>
+
         <div className="field">
           <label>Alternative route</label>
           <textarea rows={2} value={form.alternative_route} onChange={(e) => update('alternative_route', e.target.value)} />
         </div>
+
+        <div className="plan-two-col">
+          <div className="field">
+            <label>Turnaround point</label>
+            <input value={form.turnaround_point} onChange={(e) => update('turnaround_point', e.target.value)} />
+          </div>
+          <div className="field">
+            <label>Turnaround time</label>
+            <input type="time" value={form.turnaround_time} onChange={(e) => update('turnaround_time', e.target.value)} />
+          </div>
+        </div>
+
+        <h4 className="plan-subhead">Choose your terrain</h4>
+        <p className="plan-help">Acknowledge consequences. Have an alternative plan.</p>
+        <ul className="plan-checklist">
+          {STEP_C_ITEMS.map((c) => (
+            <li key={c.key}>
+              <label className="plan-check">
+                <input
+                  type="checkbox"
+                  checked={form.step_c_checks[c.key]}
+                  onChange={(e) => setStepC(c.key, e.target.checked)}
+                />
+                <span>{c.label}</span>
+              </label>
+            </li>
+          ))}
+        </ul>
       </Section>
+
+      {/* 4. Discuss your emergency plan */}
+      <Section title="4. Discuss your emergency plan" rule="Assign group gear.">
+        <div className="field">
+          <label>Who else has our itinerary?</label>
+          <input value={form.itinerary_shared_with} onChange={(e) => update('itinerary_shared_with', e.target.value)} />
+        </div>
+
+        <h4 className="plan-subhead">Gear</h4>
+        <div className="table-scroll">
+          <table className="plan-table">
+            <thead>
+              <tr>
+                <th>Item</th>
+                <th>Carried by</th>
+              </tr>
+            </thead>
+            <tbody>
+              {GEAR_ITEMS.map((g) => (
+                <tr key={g.key}>
+                  <td>
+                    <label className="plan-check">
+                      <input
+                        type="checkbox"
+                        checked={form.gear[g.key].checked}
+                        onChange={(e) => setGear(g.key, { checked: e.target.checked })}
+                      />
+                      <span>{g.label}</span>
+                    </label>
+                  </td>
+                  <td>
+                    <select
+                      value={form.gear[g.key].carried_by}
+                      onChange={(e) => setGear(g.key, { carried_by: e.target.value })}
+                    >
+                      <option value="">Select a member…</option>
+                      {memberNames.map((n) => (
+                        <option key={n} value={n}>
+                          {n}
+                        </option>
+                      ))}
+                    </select>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </Section>
+
+      {/* Closing */}
+      <div className="field plan-closing">
+        <label>What gives us the confidence to carry out this plan?</label>
+        <textarea
+          rows={3}
+          value={form.confidence_statement}
+          onChange={(e) => update('confidence_statement', e.target.value)}
+        />
+      </div>
 
       <div className="row plan-actions">
         <button className="primary" type="submit">
