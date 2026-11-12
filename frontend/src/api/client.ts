@@ -20,7 +20,7 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
 
 export const api = {
   listTrips: () => request<Trip[]>('/api/trips'),
-  createTrip: (input: { title: string; zone?: string; start_date?: string; end_date?: string }) =>
+  createTrip: (input: { title: string; state: string; start_date?: string; end_date?: string }) =>
     request<Trip>('/api/trips', {
       method: 'POST',
       body: JSON.stringify({ owner_id: DEMO_USER_ID, ...input }),

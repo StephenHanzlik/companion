@@ -1,0 +1,2 @@
+ALTER TABLE trips DROP COLUMN state;
+ALTER TABLE trips ADD COLUMN zone TEXT;

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { api } from '../api/client'
 import type { Trip } from '../api/types'
+import { stateName } from '../api/states'
 import PlanTab from './PlanTab'
 import RideTab from './RideTab'
 import DebriefTab from './DebriefTab'
@@ -24,7 +25,7 @@ export default function TripWorkspace({ tripId, onBack }: { tripId: string; onBa
       <div className="card">
         <h2>{trip?.title ?? 'Loading…'}</h2>
         <p className="muted">
-          {trip?.zone ?? 'no zone'} · status: {trip?.status}
+          {stateName(trip?.state ?? null) ?? 'no state'} · status: {trip?.status}
         </p>
       </div>
 

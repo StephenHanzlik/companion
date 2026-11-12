@@ -4,7 +4,7 @@ export interface Trip {
   id: string
   owner_id: string
   title: string
-  zone: string | null
+  state: string | null
   status: TripStatus
   start_date: string | null
   end_date: string | null
