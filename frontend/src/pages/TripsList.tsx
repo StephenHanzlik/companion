@@ -56,7 +56,7 @@ export default function TripsList({ onSelectTrip }: { onSelectTrip: (tripId: str
   return (
     <div className="trips-layout">
       <div className="card trips-form-card">
-        <h2>New trip</h2>
+        <h2>Create a new trip</h2>
         <form onSubmit={handleCreate}>
           <div className="field">
             <label>Title</label>
