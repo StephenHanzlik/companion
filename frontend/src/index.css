@@ -93,6 +93,7 @@ label {
 
 .field {
   margin-bottom: 0.75rem;
+  max-width: 24rem;
 }
 
 .list-item {
