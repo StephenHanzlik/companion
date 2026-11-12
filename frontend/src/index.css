@@ -270,23 +270,30 @@ label {
   font-size: 0.8rem;
 }
 
-/* Home page: nav centered at the bottom of the hero photo. */
+/* Home page: nav centered at the bottom of the hero photo. Sized to its
+   content so the buttons never stretch across the screen. */
 .landing-nav {
   position: absolute;
-  left: 0;
-  right: 0;
+  left: 50%;
   bottom: 1.5rem;
-  display: flex;
-  justify-content: center;
+  transform: translateX(-50%);
+  width: max-content;
+  max-width: calc(100% - 2rem);
   z-index: 1;
 }
 
 .app-nav-overlay {
   margin: 0;
   gap: 0.5rem;
+  flex-wrap: nowrap;
 }
 
 .app-nav-overlay button {
+  flex: 0 0 auto;
+  width: auto;
+  white-space: nowrap;
+  padding: 0.25rem 0.6rem;
+  font-size: 0.8rem;
   background: rgba(0, 0, 0, 0.35);
   color: white;
   border: 1px solid rgba(255, 255, 255, 0.6);
