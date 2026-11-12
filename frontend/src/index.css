@@ -312,16 +312,82 @@ label {
   border-color: white;
 }
 
-/* Trips page: form and list side by side; stacks on narrow screens. */
+/* Trips page: compact fixed-width form beside a wide trips table.
+   Stacks on narrow screens. */
 .trips-layout {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+  grid-template-columns: 260px minmax(0, 1fr);
   gap: 1rem;
   align-items: start;
 }
 
 .trips-layout > .card {
   margin-bottom: 0;
+}
+
+.trips-form-card .field {
+  max-width: none;
+}
+
+.table-scroll {
+  overflow-x: auto;
+}
+
+.trips-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.trips-table th {
+  text-align: left;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #6b6f66;
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid #d9ddd7;
+  white-space: nowrap;
+}
+
+.trips-table td {
+  padding: 0.75rem;
+  border-bottom: 1px solid #e5e8e2;
+  white-space: nowrap;
+}
+
+.trips-table tr:last-child td {
+  border-bottom: none;
+}
+
+.trips-table .trip-title {
+  font-weight: 600;
+  white-space: normal;
+}
+
+.trips-table .trip-actions {
+  text-align: right;
+}
+
+.status-pill {
+  display: inline-block;
+  padding: 0.15rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  background: #eceee9;
+  color: #3d4339;
+  text-transform: capitalize;
+}
+
+.status-pill.status-active {
+  background: #dcebd9;
+  color: #2f5d3a;
+}
+
+.status-pill.status-debriefed {
+  background: #e4e6f3;
+  color: #3b4170;
 }
 
 @media (max-width: 720px) {

@@ -3,6 +3,13 @@ import { api } from '../api/client'
 import type { Trip } from '../api/types'
 import { US_STATES, stateName } from '../api/states'
 
+// Dates arrive as YYYY-MM-DD. Parse as local time so they don't shift a day.
+function formatDate(d: string | null): string {
+  if (!d) return '—'
+  const [y, m, day] = d.split('-').map(Number)
+  return new Date(y, m - 1, day).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })
+}
+
 export default function TripsList({ onSelectTrip }: { onSelectTrip: (tripId: string) => void }) {
   const [trips, setTrips] = useState<Trip[]>([])
   const [loading, setLoading] = useState(true)
@@ -48,7 +55,7 @@ export default function TripsList({ onSelectTrip }: { onSelectTrip: (tripId: str
 
   return (
     <div className="trips-layout">
-      <div className="card">
+      <div className="card trips-form-card">
         <h2>New trip</h2>
         <form onSubmit={handleCreate}>
           <div className="field">
@@ -86,26 +93,45 @@ export default function TripsList({ onSelectTrip }: { onSelectTrip: (tripId: str
         </form>
       </div>
 
-      <div className="card">
+      <div className="card trips-table-card">
         <h2>Trips</h2>
         {loading && <p className="muted">Loading…</p>}
         {error && <p style={{ color: 'crimson' }}>{error}</p>}
         {!loading && trips.length === 0 && <p className="muted">No trips yet.</p>}
-        {trips.map((trip) => (
-          <div key={trip.id} className="list-item">
-            <div className="row" style={{ justifyContent: 'space-between' }}>
-              <div>
-                <strong>{trip.title}</strong>{' '}
-                <span className="muted">
-                  {stateName(trip.state) ?? 'no state set'} · {trip.status}
-                </span>
-              </div>
-              <button className="primary" onClick={() => onSelectTrip(trip.id)}>
-                Open
-              </button>
-            </div>
+        {trips.length > 0 && (
+          <div className="table-scroll">
+            <table className="trips-table">
+              <thead>
+                <tr>
+                  <th>Trip</th>
+                  <th>State</th>
+                  <th>Start</th>
+                  <th>End</th>
+                  <th>Status</th>
+                  <th />
+                </tr>
+              </thead>
+              <tbody>
+                {trips.map((trip) => (
+                  <tr key={trip.id}>
+                    <td className="trip-title">{trip.title}</td>
+                    <td>{stateName(trip.state) ?? '—'}</td>
+                    <td>{formatDate(trip.start_date)}</td>
+                    <td>{formatDate(trip.end_date)}</td>
+                    <td>
+                      <span className={`status-pill status-${trip.status}`}>{trip.status}</span>
+                    </td>
+                    <td className="trip-actions">
+                      <button className="primary" onClick={() => onSelectTrip(trip.id)}>
+                        Open
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
-        ))}
+        )}
       </div>
     </div>
   )
