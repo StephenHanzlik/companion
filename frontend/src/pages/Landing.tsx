@@ -36,6 +36,30 @@ const stages = [
     image: '/images/preview-plan.png',
     alt: 'The Plan your trip form, showing the avalanche problems table',
   },
+  {
+    id: 'ride',
+    eyebrow: '02 · Ride',
+    headline: 'Record what you see in the field',
+    points: [
+      'Timestamped field observations',
+      'Snow profile tests',
+    ],
+    image: '/images/preview-ride.png',
+    alt: 'The Ride tab with observations and an add snow profile test form',
+  },
+  {
+    id: 'debrief',
+    eyebrow: '03 · Debrief',
+    headline: 'Reflect and learn from the trip',
+    points: [
+      'Summarize the trip',
+      'Reflect on decisions',
+      'Capture lessons learned',
+      'Submit when done',
+    ],
+    image: '/images/preview-debrief.png',
+    alt: 'The Debrief tab with summary and lessons learned fields',
+  },
 ]
 
 export default function Landing({ onGetStarted, nav }: Props) {
