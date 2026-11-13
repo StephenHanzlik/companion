@@ -922,3 +922,15 @@ label {
     height: 2.5rem;
   }
 }
+
+/* Trip workspace: Plan -> Ride -> Debrief, with arrows between the phases. */
+.phase-tabs {
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.phase-arrow {
+  color: #9aa396;
+  font-size: 1.1rem;
+  padding: 0 0.1rem;
+}

@@ -29,13 +29,15 @@ export default function TripWorkspace({ tripId, onBack }: { tripId: string; onBa
         </p>
       </div>
 
-      <div className="tabs">
+      <div className="tabs phase-tabs">
         <button className={tab === 'plan' ? 'active' : ''} onClick={() => setTab('plan')}>
           Plan
         </button>
+        <span className="phase-arrow" aria-hidden="true">→</span>
         <button className={tab === 'ride' ? 'active' : ''} onClick={() => setTab('ride')}>
           Ride
         </button>
+        <span className="phase-arrow" aria-hidden="true">→</span>
         <button className={tab === 'debrief' ? 'active' : ''} onClick={() => setTab('debrief')}>
           Debrief
         </button>
