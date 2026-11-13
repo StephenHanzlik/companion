@@ -934,3 +934,29 @@ label {
   font-size: 1.1rem;
   padding: 0 0.1rem;
 }
+
+/* Trip banner: title, state, dates, and status on one line. */
+.trip-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+}
+
+.trip-banner h2 {
+  margin: 0;
+}
+
+.trip-banner-meta {
+  margin-top: 0.25rem;
+  font-size: 0.9rem;
+  color: #6b6f66;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.trip-banner-sep {
+  opacity: 0.6;
+}

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { api } from '../api/client'
 import type { Trip } from '../api/types'
 import { stateName } from '../api/states'
+import { formatDateRange } from '../api/format'
 import PlanTab from './PlanTab'
 import RideTab from './RideTab'
 import DebriefTab from './DebriefTab'
@@ -22,11 +23,18 @@ export default function TripWorkspace({ tripId, onBack }: { tripId: string; onBa
         ← Back to trips
       </button>
 
-      <div className="card">
-        <h2>{trip?.title ?? 'Loading…'}</h2>
-        <p className="muted">
-          {stateName(trip?.state ?? null) ?? 'no state'} · status: {trip?.status}
-        </p>
+      <div className="card trip-banner">
+        <div className="trip-banner-main">
+          <h2>{trip?.title ?? 'Loading…'}</h2>
+          {trip && (
+            <div className="trip-banner-meta">
+              <span>{stateName(trip.state) ?? 'No state'}</span>
+              <span className="trip-banner-sep" aria-hidden="true">·</span>
+              <span>{formatDateRange(trip.start_date, trip.end_date)}</span>
+            </div>
+          )}
+        </div>
+        {trip && <span className={`status-pill status-${trip.status}`}>{trip.status}</span>}
       </div>
 
       <div className="tabs phase-tabs">

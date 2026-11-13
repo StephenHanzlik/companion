@@ -2,13 +2,8 @@ import { FormEvent, useEffect, useState } from 'react'
 import { api } from '../api/client'
 import type { Trip } from '../api/types'
 import { US_STATES, stateName } from '../api/states'
+import { formatDate } from '../api/format'
 
-// Dates arrive as YYYY-MM-DD. Parse as local time so they don't shift a day.
-function formatDate(d: string | null): string {
-  if (!d) return '—'
-  const [y, m, day] = d.split('-').map(Number)
-  return new Date(y, m - 1, day).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })
-}
 
 export default function TripsList({ onSelectTrip }: { onSelectTrip: (tripId: string) => void }) {
   const [trips, setTrips] = useState<Trip[]>([])
