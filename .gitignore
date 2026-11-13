@@ -1,2 +1,13 @@
 .DS_Store
 *.env
+
+# Claude Code: per-machine settings
+.claude/settings.local.json
+
+# Impeccable: reinstall with `npx impeccable install` (ships a platform binary)
+.claude/skills/impeccable/
+.claude/agents/impeccable-*.md
+
+# Impeccable live-mode helper state (machine-local)
+.impeccable/live/app-root.json
+**/.impeccable/live/roots.json
