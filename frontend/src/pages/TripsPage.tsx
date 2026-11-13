@@ -63,7 +63,7 @@ function NewTripForm({ nextSheet, onCreated, onCancel }: { nextSheet: string; on
       <ol className="ov-steps">
         <li>
           <strong>Plan</strong>
-          <span>Work through your group, the hazard, terrain and emergency plan at your desk.</span>
+          <span>Work through your group, the hazard, terrain, and emergency plan at your desk.</span>
         </li>
         <li>
           <strong>Ride</strong>
@@ -226,8 +226,8 @@ function TripsHome({
         <div className="card empty empty-lg">
           <p className="empty-title">Plan your first trip</p>
           <p>
-            Each trip moves through Plan, Ride and Debrief. Start with the plan at your desk: who’s going, the hazard, your terrain
-            choices and an emergency plan.
+            Each trip moves through Plan, Ride, and Debrief. Start with the plan at your desk: who’s going, the hazard, your terrain
+            choices, and an emergency plan.
           </p>
           <button className="btn btn-accent" onClick={onNew}>
             <Icon name="plus" size={14} />
