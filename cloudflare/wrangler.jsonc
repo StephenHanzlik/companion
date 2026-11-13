@@ -37,9 +37,16 @@
     }
   ],
 
+  // Every domain must be listed here: wrangler deploy treats this list as the
+  // full set, so a domain added only in the dashboard is removed on the next
+  // deploy (DNS record included).
   "routes": [
     {
       "pattern": "avycompanion.coldmountainsoftware.com",
+      "custom_domain": true
+    },
+    {
+      "pattern": "companion.coldmountainsoftware.com",
       "custom_domain": true
     }
   ],
