@@ -960,3 +960,134 @@ label {
 .trip-banner-sep {
   opacity: 0.6;
 }
+
+/* Trip progress: planning -> riding -> debriefed. */
+.trip-progress {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  color: #1a1f1a;
+}
+
+.tp-step-wrap {
+  display: flex;
+  align-items: center;
+}
+
+.tp-step {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.tp-dot {
+  display: inline-grid;
+  place-items: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 50%;
+  border: 2px solid #c7ccc4;
+  background: #fff;
+  color: #6b6f66;
+  font-size: 0.75rem;
+  font-weight: 600;
+  flex: 0 0 auto;
+}
+
+.tp-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.tp-done .tp-dot {
+  background: #2f5d3a;
+  border-color: #2f5d3a;
+  color: #fff;
+}
+
+.tp-done .tp-label {
+  color: #2f5d3a;
+}
+
+.tp-current .tp-dot {
+  border-color: #2f5d3a;
+  color: #2f5d3a;
+  animation: tp-pulse 2.4s ease-out infinite;
+}
+
+.tp-current .tp-label {
+  color: #1a1f1a;
+}
+
+.tp-ahead .tp-label {
+  color: #8b9088;
+  font-weight: 500;
+}
+
+.tp-line {
+  display: block;
+  width: 2.5rem;
+  height: 2px;
+  margin: 0 0.5rem;
+  background: #d9ddd7;
+  border-radius: 2px;
+}
+
+.tp-line-done {
+  background: #2f5d3a;
+}
+
+/* Compact variant for the trips table. */
+.trip-progress-compact .tp-dot {
+  width: 1.15rem;
+  height: 1.15rem;
+  font-size: 0.6rem;
+}
+
+.trip-progress-compact .tp-line {
+  width: 1.1rem;
+  margin: 0 0.3rem;
+}
+
+.tp-compact-label {
+  margin-left: 0.6rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #2f5d3a;
+  white-space: nowrap;
+}
+
+@keyframes tp-pulse {
+  0% { box-shadow: 0 0 0 0 rgba(47, 93, 58, 0.35); }
+  70% { box-shadow: 0 0 0 7px rgba(47, 93, 58, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(47, 93, 58, 0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tp-current .tp-dot {
+    animation: none;
+  }
+}
+
+/* Phase tabs take their colour from the trip's stage. */
+.tabs button.stage-done:not(.active) {
+  background: #eef4ec;
+  border-color: #9fc2a6;
+  color: #2f5d3a;
+}
+
+.tabs button.stage-current:not(.active) {
+  border: 2px solid #2f5d3a;
+  color: #2f5d3a;
+  font-weight: 600;
+}
+
+.tabs button.stage-ahead:not(.active) {
+  color: #8b9088;
+  border-style: dashed;
+}
+
+.phase-arrow.reached {
+  color: #2f5d3a;
+}

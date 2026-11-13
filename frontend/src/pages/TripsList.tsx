@@ -3,6 +3,7 @@ import { api } from '../api/client'
 import type { Trip } from '../api/types'
 import { US_STATES, stateName } from '../api/states'
 import { formatDate } from '../api/format'
+import TripProgress from '../components/TripProgress'
 
 
 export default function TripsList({ onSelectTrip }: { onSelectTrip: (tripId: string) => void }) {
@@ -114,7 +115,7 @@ export default function TripsList({ onSelectTrip }: { onSelectTrip: (tripId: str
                     <td>{formatDate(trip.start_date)}</td>
                     <td>{formatDate(trip.end_date)}</td>
                     <td>
-                      <span className={`status-pill status-${trip.status}`}>{trip.status}</span>
+                      <TripProgress status={trip.status} variant="compact" />
                     </td>
                     <td className="trip-actions">
                       <button className="primary" onClick={() => onSelectTrip(trip.id)}>
