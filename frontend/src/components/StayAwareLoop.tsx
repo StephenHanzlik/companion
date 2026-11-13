@@ -49,7 +49,7 @@ const STEPS = [
 export default function StayAwareLoop() {
   return (
     <section className="stay-aware" aria-labelledby="stay-aware-title">
-      <h3 id="stay-aware-title" className="sa-heading">Stay aware</h3>
+      <h3 id="stay-aware-title" className="subhead">Stay aware</h3>
       <div className="sa-loop">
         <div className="sa-bar" aria-hidden="true">
           <span>Repeat at each juncture · Stay aware</span>

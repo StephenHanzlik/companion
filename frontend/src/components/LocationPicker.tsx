@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useId, useState } from 'react'
 import { MapContainer, Marker, TileLayer, useMapEvents } from 'react-leaflet'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
@@ -32,15 +32,13 @@ function ClickHandler({ onPick }: { onPick: (lat: number, lon: number) => void }
   return null
 }
 
-export default function LocationPicker({
-  value,
-  onChange,
-}: {
-  value: PlaceValue
-  onChange: (next: PlaceValue) => void
-}) {
+// A place name plus an optional point. The map stays folded until asked for,
+// since most write-ups only need the name.
+export default function LocationPicker({ value, onChange }: { value: PlaceValue; onChange: (next: PlaceValue) => void }) {
+  const id = useId()
   const [geoError, setGeoError] = useState<string | null>(null)
   const hasPoint = value.lat !== null && value.lon !== null
+  const [showMap, setShowMap] = useState(hasPoint)
   const center: [number, number] = hasPoint ? [value.lat as number, value.lon as number] : DEFAULT_CENTER
 
   function setPoint(lat: number, lon: number) {
@@ -49,29 +47,51 @@ export default function LocationPicker({
 
   function useMyLocation() {
     setGeoError(null)
+    setShowMap(true)
     if (!navigator.geolocation) {
-      setGeoError('This browser cannot get your location.')
+      setGeoError('This browser can’t share its location. Click the map instead.')
       return
     }
     navigator.geolocation.getCurrentPosition(
       (pos) => setPoint(pos.coords.latitude, pos.coords.longitude),
-      () => setGeoError('Could not get your location. Tap the map instead.'),
+      () => setGeoError('Couldn’t get your location. Click the map instead.'),
       { enableHighAccuracy: true, timeout: 15000 },
     )
   }
 
   return (
-    <div className="location-picker">
-      <div className="field">
-        <label>Location</label>
-        <input
-          value={value.name}
-          placeholder="e.g. Treeline bowl below the ridge"
-          onChange={(e) => onChange({ ...value, name: e.target.value })}
-        />
+    <div className="field location">
+      <label className="field-label" htmlFor={`${id}-name`}>
+        Where
+      </label>
+      <input
+        id={`${id}-name`}
+        className="input"
+        value={value.name}
+        placeholder="e.g. Treeline bowl below the ridge"
+        onChange={(e) => onChange({ ...value, name: e.target.value })}
+      />
+      <div className="location-actions">
+        <button type="button" className="link-btn" aria-expanded={showMap} onClick={() => setShowMap((s) => !s)}>
+          {showMap ? 'Hide map' : hasPoint ? 'Show point on map' : 'Add a point on the map'}
+        </button>
+        {showMap && (
+          <button type="button" className="link-btn" onClick={useMyLocation}>
+            Use my location
+          </button>
+        )}
+        {hasPoint && (
+          <>
+            <span className="mono location-coords">
+              {(value.lat as number).toFixed(4)}, {(value.lon as number).toFixed(4)}
+            </span>
+            <button type="button" className="link-btn" onClick={() => onChange({ ...value, lat: null, lon: null })}>
+              Clear point
+            </button>
+          </>
+        )}
       </div>
-
-      <div className="location-picker-map">
+      {showMap && (
         <MapContainer key={hasPoint ? 'pt' : 'none'} center={center} zoom={hasPoint ? 13 : 9} className="map-box">
           <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -80,26 +100,8 @@ export default function LocationPicker({
           <ClickHandler onPick={setPoint} />
           {hasPoint && <Marker position={center} />}
         </MapContainer>
-      </div>
-
-      <div className="location-picker-actions">
-        <button type="button" className="plan-add" onClick={useMyLocation}>
-          Use my location
-        </button>
-        {hasPoint && (
-          <button
-            type="button"
-            className="plan-link"
-            onClick={() => onChange({ ...value, lat: null, lon: null })}
-          >
-            Clear point
-          </button>
-        )}
-        <span className="muted">
-          {hasPoint ? `${(value.lat as number).toFixed(5)}, ${(value.lon as number).toFixed(5)}` : 'Tap the map to set a point'}
-        </span>
-      </div>
-      {geoError && <p className="plan-help">{geoError}</p>}
+      )}
+      {geoError && <p className="help">{geoError}</p>}
     </div>
   )
 }

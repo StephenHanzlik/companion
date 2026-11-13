@@ -51,6 +51,7 @@ make dev-db        # postgres + migrate + seed only, detached
 make dev-sqlc       # regenerate internal/db/ locally (needs `sqlc` installed)
 make dev-backend    # go run ./cmd/server against localhost:5432, with live recompiles
 make dev-frontend   # npm run dev — Vite HMR
+cd frontend && npm run dev:mock   # frontend only, sample trips in the browser, no backend needed
 make dev-test       # go test ./... locally (still needs Colima running for testcontainers)
 make dev-db-down    # tear down the dev Postgres
 ```
@@ -91,7 +92,8 @@ backend/
   db/seed/                demo user seed
 frontend/
   src/api/                fetch client + TS types mirroring the API
-  src/pages/              TripsList, TripWorkspace (Plan/Ride/Debrief tabs)
+  src/pages/              Landing, TripsPage (trip rail), TripWorkspace (Plan/Ride/Debrief tabs)
+  src/api/mock.ts         in-browser mock API for `npm run dev:mock`
 docker-compose.yml         full local stack
 Makefile                   up/down/build/sqlc/test/logs (Docker) + dev-* (native)
 ```

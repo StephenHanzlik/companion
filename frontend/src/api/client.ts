@@ -1,4 +1,5 @@
 import type { Debrief, Observation, Plan, SnowProfileTest, Trip, WeatherSummary } from './types'
+import { mockApi } from './mock'
 
 // In dev the API runs on localhost:8080. In a production build the Worker
 // serves both the app and /api, so calls go to the same origin.
@@ -6,6 +7,10 @@ const BASE_URL = import.meta.env.VITE_API_URL ?? (import.meta.env.DEV ? 'http://
 
 // Seeded by db/seed/seed.sql. Stands in for auth until the real thing exists.
 export const DEMO_USER_ID = '00000000-0000-0000-0000-000000000001'
+
+// `npm run dev:mock` sets this, so the frontend can be worked on without the
+// backend running. Production builds never set it.
+export const USING_MOCK_API = import.meta.env.VITE_MOCK_API === '1'
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const res = await fetch(`${BASE_URL}${path}`, {
@@ -20,7 +25,7 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   return res.json() as Promise<T>
 }
 
-export const api = {
+const httpApi = {
   listTrips: () => request<Trip[]>('/api/trips'),
   createTrip: (input: { title: string; state: string; start_date?: string; end_date?: string }) =>
     request<Trip>('/api/trips', {
@@ -63,3 +68,7 @@ export const api = {
   getWeather: (lat: number, lon: number) =>
     request<WeatherSummary>(`/api/weather?lat=${lat}&lon=${lon}`),
 }
+
+export type Api = typeof httpApi
+
+export const api: Api = USING_MOCK_API ? mockApi : httpApi

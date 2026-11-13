@@ -1,456 +1,609 @@
-import { FormEvent, useState } from 'react'
+import { useEffect, useId, useRef, useState } from 'react'
 import {
-  ASPECTS,
   AvalancheProblem,
+  ELEVATION_BANDS,
   GEAR_ITEMS,
   GROUP_CHECKS,
   GearKey,
   GroupCheckKey,
   GroupMember,
+  PLAN_SECTIONS,
+  PROBLEM_TYPES,
+  PlanSectionId,
   PlanningForm,
   STEP_C_ITEMS,
   StepCKey,
   TERRAIN_EXPOSURE_FOOTNOTE,
   TERRAIN_MINDSETS,
+  describedProblems,
   emptyMember,
-  emptyPlanningForm,
   emptyProblem,
+  mindsetShort,
+  namedMembers,
+  planProgress,
+  sectionProgress,
 } from '../api/planForm'
+import { PlanDraft, loadPlanDraft, savePlanDraft } from '../api/planStore'
+import { stateName } from '../api/states'
+import { formatDate } from '../api/format'
+import { CompassPicker, ElevationPicker } from '../components/AspectPicker'
+import { Count, Field, Guide, SavedAt, SectionCard } from '../components/Form'
+import Icon from '../components/Icon'
+import { OverviewCard, OvList, OvNote, Progress } from '../components/Overview'
+import Rose, { problemColor } from '../components/Rose'
+import { PhaseFrame, PhaseProps } from './TripWorkspace'
 
-// Mocked: nothing is sent to the API yet. The form keeps its state for the
-// life of this tab only. Persistence comes once the data model is agreed.
+const toggle = (list: string[], value: string) =>
+  list.includes(value) ? list.filter((x) => x !== value) : [...list, value]
 
-function Help({ children }: { children: React.ReactNode }) {
-  return <p className="plan-help">{children}</p>
+function firstOpenSection(form: PlanningForm): PlanSectionId {
+  const next = PLAN_SECTIONS.find((s) => {
+    const p = sectionProgress(form, s.id)
+    return p.done < p.total
+  })
+  return next?.id ?? 'confidence'
 }
 
-// Guidance from the field book, folded under the field it belongs to.
-function Guide({ title = 'Guidance', children }: { title?: string; children: React.ReactNode }) {
-  return (
-    <details className="plan-guide">
-      <summary>{title}</summary>
-      <div className="plan-guide-body">{children}</div>
-    </details>
-  )
+function sectionSummary(form: PlanningForm, id: PlanSectionId): string {
+  switch (id) {
+    case 'group': {
+      const n = namedMembers(form).length
+      const agreed = GROUP_CHECKS.filter((c) => form.group_checks[c.key].checked).length
+      return n === 0 ? '' : `${n} ${n === 1 ? 'member' : 'members'} · ${agreed} of ${GROUP_CHECKS.length} discussed`
+    }
+    case 'hazard': {
+      const names = describedProblems(form).map((p) => p.problem_type.trim())
+      return names.length ? names.join(', ') : ''
+    }
+    case 'terrain': {
+      const parts = [mindsetShort(form.terrain_mindset)]
+      if (form.turnaround_time) parts.push(`turn around ${form.turnaround_time}`)
+      return parts.filter(Boolean).join(' · ')
+    }
+    case 'emergency': {
+      const gear = GEAR_ITEMS.filter((g) => form.gear[g.key].checked).length
+      return gear ? `${gear} of ${GEAR_ITEMS.length} gear items covered` : ''
+    }
+    case 'confidence':
+      return form.confidence_statement.trim().slice(0, 80)
+  }
 }
 
-function Section({
-  title,
-  rule,
-  children,
-}: {
-  title: string
-  rule?: string
-  children: React.ReactNode
-}) {
-  return (
-    <details className="plan-section">
-      <summary>
-        <span className="plan-section-title">{title}</span>
-        {rule && <span className="plan-section-rule">{rule}</span>}
-      </summary>
-      <div className="plan-section-body">{children}</div>
-    </details>
-  )
-}
+export default function PlanTab({ trip, sheet, header, onStatusChange, onGoTo }: PhaseProps) {
+  const [draft, setDraft] = useState<PlanDraft>(() => loadPlanDraft(trip.id))
+  const [open, setOpen] = useState<PlanSectionId | null>(() => firstOpenSection(loadPlanDraft(trip.id).form))
+  const [saveFailed, setSaveFailed] = useState(false)
+  const [signing, setSigning] = useState(false)
+  const [signError, setSignError] = useState<string | null>(null)
+  const form = draft.form
+  const ids = useId()
 
-export default function PlanTab(_props: { tripId: string }) {
-  const [form, setForm] = useState<PlanningForm>(emptyPlanningForm)
-  const [notice, setNotice] = useState<string | null>(null)
-  const [signedOff, setSignedOff] = useState(false)
+  // Autosave shortly after each change.
+  const mounted = useRef(false)
+  useEffect(() => {
+    if (!mounted.current) {
+      mounted.current = true
+      return
+    }
+    const t = setTimeout(() => {
+      const savedAt = new Date().toISOString()
+      const ok = savePlanDraft(trip.id, { ...draft, form, savedAt })
+      setSaveFailed(!ok)
+      if (ok) setDraft((d) => ({ ...d, savedAt }))
+    }, 450)
+    return () => clearTimeout(t)
+  }, [form])
 
   function update<K extends keyof PlanningForm>(key: K, value: PlanningForm[K]) {
-    setForm((f) => ({ ...f, [key]: value }))
+    setDraft((d) => ({ ...d, form: { ...d.form, [key]: value } }))
   }
 
-  // Group check-in rows
-  function setMember(i: number, patch: Partial<GroupMember>) {
-    update(
-      'group',
-      form.group.map((m, idx) => (idx === i ? { ...m, ...patch } : m)),
-    )
-  }
-  function removeMember(i: number) {
-    update('group', form.group.filter((_, idx) => idx !== i))
-  }
-
-  // Group discussion checklist
-  function setCheck(key: GroupCheckKey, patch: Partial<PlanningForm['group_checks'][GroupCheckKey]>) {
+  // Group
+  const setMember = (i: number, patch: Partial<GroupMember>) =>
+    update('group', form.group.map((m, idx) => (idx === i ? { ...m, ...patch } : m)))
+  const removeMember = (i: number) => update('group', form.group.filter((_, idx) => idx !== i))
+  const setCheck = (key: GroupCheckKey, patch: Partial<PlanningForm['group_checks'][GroupCheckKey]>) =>
     update('group_checks', { ...form.group_checks, [key]: { ...form.group_checks[key], ...patch } })
-  }
 
-  // Avalanche problems
-  function setProblem(i: number, patch: Partial<AvalancheProblem>) {
-    update(
-      'avalanche_problems',
-      form.avalanche_problems.map((p, idx) => (idx === i ? { ...p, ...patch } : p)),
+  // Problems
+  const setProblem = (i: number, patch: Partial<AvalancheProblem>) =>
+    update('avalanche_problems', form.avalanche_problems.map((p, idx) => (idx === i ? { ...p, ...patch } : p)))
+  const removeProblem = (i: number) =>
+    update('avalanche_problems', form.avalanche_problems.filter((_, idx) => idx !== i))
+
+  const setStepC = (key: StepCKey, checked: boolean) => update('step_c_checks', { ...form.step_c_checks, [key]: checked })
+  const setGear = (key: GearKey, patch: Partial<PlanningForm['gear'][GearKey]>) =>
+    update('gear', { ...form.gear, [key]: { ...form.gear[key], ...patch } })
+
+  const memberNames = namedMembers(form).map((m) => m.name.trim())
+
+  function go(id: PlanSectionId) {
+    setOpen(id)
+    requestAnimationFrame(() =>
+      document.getElementById(`${ids}-${id}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' }),
     )
   }
-  function toggleAspect(i: number, aspect: string) {
-    const current = form.avalanche_problems[i].aspects
-    const next = current.includes(aspect) ? current.filter((a) => a !== aspect) : [...current, aspect]
-    setProblem(i, { aspects: next })
-  }
-  function removeProblem(i: number) {
-    update('avalanche_problems', form.avalanche_problems.filter((_, idx) => idx !== i))
-  }
 
-  // Step C summary checklist
-  function setStepC(key: StepCKey, checked: boolean) {
-    update('step_c_checks', { ...form.step_c_checks, [key]: checked })
-  }
-
-  // Emergency gear
-  function setGear(key: GearKey, patch: Partial<PlanningForm['gear'][GearKey]>) {
-    update('gear', { ...form.gear, [key]: { ...form.gear[key], ...patch } })
+  async function signOff() {
+    setSigning(true)
+    setSignError(null)
+    const signedOffAt = new Date().toISOString()
+    const next = { ...draft, signedOffAt, savedAt: signedOffAt }
+    if (!savePlanDraft(trip.id, next)) setSaveFailed(true)
+    setDraft(next)
+    try {
+      if (trip.status === 'planning') await onStatusChange('active')
+    } catch (e) {
+      setSignError(`The plan is signed off, but the trip could not be moved to Ride: ${String(e)}`)
+    } finally {
+      setSigning(false)
+    }
   }
 
-  // Names of group members, for the "carried by" selects.
-  const memberNames = form.group.map((m) => m.name.trim()).filter((n) => n.length > 0)
+  const total = planProgress(form)
+  const order = PLAN_SECTIONS.map((s) => s.id)
 
-  function handleSave(e: FormEvent) {
-    e.preventDefault()
-    setNotice('Saved for this session only. Saving to the trip is not wired up yet.')
+  const footer = (id: PlanSectionId) => {
+    const i = order.indexOf(id)
+    const prev = order[i - 1]
+    const next = PLAN_SECTIONS[i + 1]
+    return (
+      <>
+        {saveFailed ? (
+          <span className="saved saved-error">Couldn’t save in this browser. Keep this tab open.</span>
+        ) : (
+          <SavedAt at={draft.savedAt} where="this browser" />
+        )}
+        <div className="btn-row">
+          {prev && (
+            <button type="button" className="btn btn-quiet" onClick={() => go(prev)}>
+              Back
+            </button>
+          )}
+          {next && (
+            <button type="button" className="btn btn-primary" onClick={() => go(next.id)}>
+              Continue to {next.no}
+              <Icon name="arrow-right" size={14} />
+            </button>
+          )}
+        </div>
+      </>
+    )
   }
 
-  function handleSignOff() {
-    setSignedOff(true)
-    setNotice('Signed off for this session only. Sign-off is not persisted yet.')
+  const problems = form.avalanche_problems
+    .map((p, i) => ({ p, color: problemColor(i) }))
+    .filter(({ p }) => p.problem_type.trim() && p.aspects.length > 0 && p.elevations.length > 0)
+
+  const aside = (
+    <OverviewCard
+      label="Plan overview"
+      title={trip.title}
+      meta={<><span className="mono">Sheet {sheet}</span> · {stateName(trip.state) ?? 'No state'} · {trip.start_date ? formatDate(trip.start_date) : 'No date'}</>}
+    >
+      <Progress
+        steps={PLAN_SECTIONS.map((s) => {
+          const p = sectionProgress(form, s.id)
+          if (p.total > 0 && p.done === p.total) return 'done'
+          return s.id === open ? 'current' : 'ahead'
+        })}
+        label="Plan"
+        value={`${total.done} of ${total.total}`}
+      />
+      <OvList
+        rows={[
+          {
+            label: 'Party',
+            value: memberNames.length ? `${memberNames.length} ${memberNames.length === 1 ? 'member' : 'members'}` : 'Not set',
+            empty: memberNames.length === 0,
+          },
+          {
+            label: 'Signed off',
+            value: draft.signedOffAt ? formatDate(draft.signedOffAt.slice(0, 10)) : 'Not yet',
+            empty: !draft.signedOffAt,
+          },
+        ]}
+      />
+      <div className="ov-roses">
+        {problems.length === 0 ? (
+          <p className="ov-empty">Avalanche problems from 2.0 appear here by aspect and elevation.</p>
+        ) : (
+          <>
+            <div className="ov-rose-grid">
+              {problems.map(({ p, color }, i) => (
+                <figure key={i} className="ov-rose">
+                  <Rose aspects={p.aspects} elevations={p.elevations} color={color} />
+                  <figcaption>
+                    <i style={{ background: color }} aria-hidden="true" />
+                    {p.problem_type}
+                  </figcaption>
+                </figure>
+              ))}
+            </div>
+            <ul className="ov-legend" aria-label="Rings, from the center out">
+              {ELEVATION_BANDS.map((b, i) => (
+                <li key={b.key}>
+                  <i className={`band-${i}`} aria-hidden="true" />
+                  {['Above', 'Near', 'Below treeline'][i]}
+                </li>
+              ))}
+            </ul>
+          </>
+        )}
+      </div>
+      <OvList
+        rows={[
+          { label: 'Terrain mindset', value: mindsetShort(form.terrain_mindset) || 'Not set', empty: !form.terrain_mindset },
+          {
+            label: 'Turnaround',
+            value: [form.turnaround_time, form.turnaround_point].filter(Boolean).join(' · ') || 'Not set',
+            empty: !form.turnaround_time && !form.turnaround_point,
+          },
+          { label: 'Itinerary shared', value: form.itinerary_shared_with || 'Not set', empty: !form.itinerary_shared_with },
+        ]}
+      />
+      <OvNote>From your plan entries. Not a hazard rating.</OvNote>
+    </OverviewCard>
+  )
+
+  const section = (id: PlanSectionId) => PLAN_SECTIONS.find((s) => s.id === id)!
+  const cardProps = (id: PlanSectionId) => {
+    const s = section(id)
+    const p = sectionProgress(form, id)
+    return {
+      no: s.no,
+      title: s.title,
+      rule: s.rule,
+      status: <Count done={p.done} total={p.total} />,
+      summary: sectionSummary(form, id),
+      open: open === id,
+      onOpen: () => setOpen(open === id ? null : id),
+      footer: footer(id),
+    }
   }
 
   return (
-    <form className="card plan-form" onSubmit={handleSave}>
-      <div className="plan-header">
-        <h3>Plan your trip</h3>
-        <div className="field plan-date">
-          <label>Date</label>
-          <input type="date" value={form.date} onChange={(e) => update('date', e.target.value)} />
-        </div>
-      </div>
+    <PhaseFrame header={header} aside={aside}>
+      <div className="stack">
+        {/* 1.0 Group */}
+        <div id={`${ids}-group`} className="anchor">
+          <SectionCard {...cardProps('group')}>
+            <h3 className="subhead">Group check-in</h3>
+            <div className="table-wrap">
+              <table className="table table-inputs">
+                <thead>
+                  <tr>
+                    <th scope="col">Name</th>
+                    <th scope="col">Contact</th>
+                    <th scope="col">Emergency contact</th>
+                    <th scope="col">
+                      <span className="sr-only">Remove</span>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {form.group.map((m, i) => (
+                    <tr key={i}>
+                      <td>
+                        <input className="input" aria-label={`Member ${i + 1} name`} value={m.name} onChange={(e) => setMember(i, { name: e.target.value })} />
+                      </td>
+                      <td>
+                        <input className="input" aria-label={`Member ${i + 1} contact`} value={m.contact} onChange={(e) => setMember(i, { contact: e.target.value })} />
+                      </td>
+                      <td>
+                        <input
+                          className="input"
+                          aria-label={`Member ${i + 1} emergency contact`}
+                          value={m.emergency_contact}
+                          onChange={(e) => setMember(i, { emergency_contact: e.target.value })}
+                        />
+                      </td>
+                      <td className="cell-action">
+                        {form.group.length > 1 && (
+                          <button type="button" className="icon-btn" aria-label={`Remove ${m.name || `member ${i + 1}`}`} onClick={() => removeMember(i)}>
+                            <Icon name="x" size={15} />
+                          </button>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <button type="button" className="btn btn-dashed" onClick={() => update('group', [...form.group, emptyMember()])}>
+              <Icon name="plus" size={14} />
+              Add member
+            </button>
 
-      {notice && <p className="plan-notice">{notice}</p>}
-
-      {/* 1. Assemble your group */}
-      <Section title="1. Assemble your group">
-        <h4 className="plan-subhead">Group check-in</h4>
-        <div className="table-scroll">
-          <table className="plan-table">
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Contact info</th>
-                <th>Emergency contact</th>
-                <th />
-              </tr>
-            </thead>
-            <tbody>
-              {form.group.map((m, i) => (
-                <tr key={i}>
-                  <td>
-                    <input value={m.name} onChange={(e) => setMember(i, { name: e.target.value })} />
-                  </td>
-                  <td>
-                    <input value={m.contact} onChange={(e) => setMember(i, { contact: e.target.value })} />
-                  </td>
-                  <td>
-                    <input
-                      value={m.emergency_contact}
-                      onChange={(e) => setMember(i, { emergency_contact: e.target.value })}
-                    />
-                  </td>
-                  <td className="plan-row-actions">
-                    {form.group.length > 1 && (
-                      <button type="button" className="plan-link" onClick={() => removeMember(i)}>
-                        Remove
-                      </button>
-                    )}
-                  </td>
-                </tr>
+            <h3 className="subhead">Group discussion</h3>
+            <ul className="checklist">
+              {GROUP_CHECKS.map((c) => (
+                <li key={c.key} className="checklist-row">
+                  <label className="check">
+                    <input type="checkbox" checked={form.group_checks[c.key].checked} onChange={(e) => setCheck(c.key, { checked: e.target.checked })} />
+                    <span>
+                      {c.label}
+                      {'help' in c && <span className="check-help">{c.help}</span>}
+                    </span>
+                  </label>
+                  <input
+                    className="input input-sm"
+                    placeholder="Notes"
+                    aria-label={`Notes: ${c.label}`}
+                    value={form.group_checks[c.key].notes}
+                    onChange={(e) => setCheck(c.key, { notes: e.target.value })}
+                  />
+                </li>
               ))}
-            </tbody>
-          </table>
-        </div>
-        <button type="button" className="plan-add" onClick={() => update('group', [...form.group, emptyMember()])}>
-          + Add member
-        </button>
-
-        <h4 className="plan-subhead">Group discussion</h4>
-        <ul className="plan-checklist">
-          {GROUP_CHECKS.map((c) => (
-            <li key={c.key}>
-              <label className="plan-check">
-                <input
-                  type="checkbox"
-                  checked={form.group_checks[c.key].checked}
-                  onChange={(e) => setCheck(c.key, { checked: e.target.checked })}
-                />
-                <span>{c.label}</span>
-              </label>
-              {'help' in c && <Help>{c.help}</Help>}
-              <input
-                className="plan-note"
-                placeholder="Notes (optional)"
-                value={form.group_checks[c.key].notes}
-                onChange={(e) => setCheck(c.key, { notes: e.target.value })}
-              />
-            </li>
-          ))}
-        </ul>
-      </Section>
-
-      {/* 2. Anticipate the hazard */}
-      <Section title="2. Anticipate the hazard" rule="Read the local avalanche advisory. Get expert opinion.">
-        <div className="field">
-          <label>Weather factors</label>
-          <Help>Current and forecast weather that can affect travel or hazard: snowfall, wind, drifting snow, warming.</Help>
-          <textarea rows={3} value={form.weather_factors} onChange={(e) => update('weather_factors', e.target.value)} />
+            </ul>
+          </SectionCard>
         </div>
 
-        <h4 className="plan-subhead">Avalanche problems</h4>
-        <div className="table-scroll">
-          <table className="plan-table plan-problems">
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Problem type</th>
-                <th>Size</th>
-                <th>Elevation</th>
-                <th>Aspect</th>
-                <th>Terrain features</th>
-                <th>Danger trend &amp; timing</th>
-                <th />
-              </tr>
-            </thead>
-            <tbody>
+        {/* 2.0 Hazard */}
+        <div id={`${ids}-hazard`} className="anchor">
+          <SectionCard {...cardProps('hazard')}>
+            <Field label="Weather factors" help="— snowfall, wind, drifting snow, warming" htmlFor={`${ids}-wx`}>
+              <textarea id={`${ids}-wx`} className="input" rows={3} value={form.weather_factors} onChange={(e) => update('weather_factors', e.target.value)} />
+            </Field>
+
+            <div className="field-label-row">
+              <h3 className="field-label">Avalanche problems</h3>
+              <Guide title="What the fields mean">
+                <ul>
+                  <li>
+                    <strong>Elevation:</strong> ALP is above treeline, NTL near treeline, BTL below treeline, the bands
+                    avalanche forecasts use.
+                  </li>
+                  <li>
+                    <strong>Size:</strong> destructive size, from D1 (relatively harmless to people) to D5 (largest known).
+                  </li>
+                  <li>
+                    <strong>Aspect:</strong> the direction a slope faces. Pick every aspect the advisory names.
+                  </li>
+                </ul>
+              </Guide>
+            </div>
+            <datalist id={`${ids}-types`}>
+              {PROBLEM_TYPES.map((t) => (
+                <option key={t} value={t} />
+              ))}
+            </datalist>
+            <div className="problems">
               {form.avalanche_problems.map((p, i) => (
-                <tr key={i}>
-                  <td className="plan-rank">{i + 1}</td>
-                  <td>
-                    <input
-                      placeholder="e.g. Wind Slab"
-                      value={p.problem_type}
-                      onChange={(e) => setProblem(i, { problem_type: e.target.value })}
-                    />
-                  </td>
-                  <td>
-                    <input value={p.size} onChange={(e) => setProblem(i, { size: e.target.value })} />
-                  </td>
-                  <td>
-                    <input value={p.elevation} onChange={(e) => setProblem(i, { elevation: e.target.value })} />
-                  </td>
-                  <td>
-                    <div className="aspect-chips">
-                      {ASPECTS.map((a) => (
-                        <button
-                          key={a}
-                          type="button"
-                          aria-pressed={p.aspects.includes(a)}
-                          className={p.aspects.includes(a) ? 'aspect on' : 'aspect'}
-                          onClick={() => toggleAspect(i, a)}
-                        >
-                          {a}
-                        </button>
-                      ))}
-                    </div>
-                  </td>
-                  <td>
-                    <input
-                      value={p.terrain_features}
-                      onChange={(e) => setProblem(i, { terrain_features: e.target.value })}
-                    />
-                  </td>
-                  <td>
-                    <input
-                      value={p.danger_trend_timing}
-                      onChange={(e) => setProblem(i, { danger_trend_timing: e.target.value })}
-                    />
-                  </td>
-                  <td className="plan-row-actions">
-                    {i >= 2 && (
-                      <button type="button" className="plan-link" onClick={() => removeProblem(i)}>
-                        Remove
-                      </button>
-                    )}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-        <button
-          type="button"
-          className="plan-add"
-          onClick={() => update('avalanche_problems', [...form.avalanche_problems, emptyProblem()])}
-        >
-          + Add problem
-        </button>
-
-        <div className="field">
-          <label>Advisory key message</label>
-          <Help>Note recent avalanches and travel advice.</Help>
-          <textarea
-            rows={3}
-            value={form.advisory_key_message}
-            onChange={(e) => update('advisory_key_message', e.target.value)}
-          />
-        </div>
-      </Section>
-
-      {/* 3. Plan to manage avalanche terrain */}
-      <Section
-        title="3. Plan to manage avalanche terrain"
-        rule="Decide by consensus. Voice all concerns. Respect any veto. Challenge assumptions."
-      >
-        <div className="field">
-          <label>Today's terrain mindset</label>
-          <Help>Pick a terrain mindset based on exposure.</Help>
-          <Guide>
-            <ul>
-              <li>When danger is elevated, choose less exposed terrain.</li>
-              <li>When terrain or conditions are unfamiliar, or the group is unsure, choose less exposed terrain.</li>
-              <li>Think about going with an expert who can manage current conditions and more complex terrain.</li>
-            </ul>
-          </Guide>
-          <div className="mindset-options">
-            {TERRAIN_MINDSETS.map((opt) => (
-              <label key={opt.value} className="plan-check mindset">
-                <input
-                  type="radio"
-                  name="terrain_mindset"
-                  value={opt.value}
-                  checked={form.terrain_mindset === opt.value}
-                  onChange={() => update('terrain_mindset', opt.value)}
-                />
-                <span>
-                  <strong>{opt.label}</strong>
-                  <span className="mindset-desc">{opt.description}</span>
-                </span>
-              </label>
-            ))}
-          </div>
-          <p className="plan-footnote">{TERRAIN_EXPOSURE_FOOTNOTE}</p>
-        </div>
-
-        <div className="field">
-          <label>Slopes and areas to avoid</label>
-          <textarea rows={2} value={form.avoid_areas} onChange={(e) => update('avoid_areas', e.target.value)} />
-        </div>
-
-        <div className="field">
-          <label>Route, with check-in stops</label>
-          <Help>Note important precautions on the route.</Help>
-          <Guide title="Guidance: discuss route options">
-            <p>Discuss route options for today's group, weather, and avalanche concerns.</p>
-            <ul>
-              <li>Use maps, photos, and guidebooks to find avalanche slopes on the route.</li>
-              <li>Find terrain with less exposure and less consequence.</li>
-              <li>Think about your time plan in relation to the hazard.</li>
-            </ul>
-          </Guide>
-          <textarea rows={3} value={form.route} onChange={(e) => update('route', e.target.value)} />
-        </div>
-
-        <div className="field">
-          <label>Alternative route</label>
-          <textarea rows={2} value={form.alternative_route} onChange={(e) => update('alternative_route', e.target.value)} />
-        </div>
-
-        <div className="plan-two-col">
-          <div className="field">
-            <label>Turnaround point</label>
-            <input value={form.turnaround_point} onChange={(e) => update('turnaround_point', e.target.value)} />
-          </div>
-          <div className="field">
-            <label>Turnaround time</label>
-            <input type="time" value={form.turnaround_time} onChange={(e) => update('turnaround_time', e.target.value)} />
-          </div>
-        </div>
-
-        <h4 className="plan-subhead">Choose your terrain</h4>
-        <p className="plan-help">Acknowledge consequences. Have an alternative plan.</p>
-        <ul className="plan-checklist">
-          {STEP_C_ITEMS.map((c) => (
-            <li key={c.key}>
-              <label className="plan-check">
-                <input
-                  type="checkbox"
-                  checked={form.step_c_checks[c.key]}
-                  onChange={(e) => setStepC(c.key, e.target.checked)}
-                />
-                <span>{c.label}</span>
-              </label>
-            </li>
-          ))}
-        </ul>
-      </Section>
-
-      {/* 4. Discuss your emergency plan */}
-      <Section title="4. Discuss your emergency plan" rule="Assign group gear.">
-        <div className="field">
-          <label>Who else has our itinerary?</label>
-          <input value={form.itinerary_shared_with} onChange={(e) => update('itinerary_shared_with', e.target.value)} />
-        </div>
-
-        <h4 className="plan-subhead">Gear</h4>
-        <div className="table-scroll">
-          <table className="plan-table">
-            <thead>
-              <tr>
-                <th>Item</th>
-                <th>Carried by</th>
-              </tr>
-            </thead>
-            <tbody>
-              {GEAR_ITEMS.map((g) => (
-                <tr key={g.key}>
-                  <td>
-                    <label className="plan-check">
+                <div key={i} className="problem">
+                  <div className="problem-key">
+                    <span className="mono">{i + 1}</span>
+                    <i style={{ background: problemColor(i) }} aria-hidden="true" />
+                  </div>
+                  <div className="problem-fields">
+                    <Field label="Type" htmlFor={`${ids}-pt-${i}`}>
                       <input
-                        type="checkbox"
-                        checked={form.gear[g.key].checked}
-                        onChange={(e) => setGear(g.key, { checked: e.target.checked })}
+                        id={`${ids}-pt-${i}`}
+                        className="input"
+                        list={`${ids}-types`}
+                        placeholder="e.g. Wind slab"
+                        value={p.problem_type}
+                        onChange={(e) => setProblem(i, { problem_type: e.target.value })}
                       />
-                      <span>{g.label}</span>
-                    </label>
-                  </td>
-                  <td>
-                    <select
-                      value={form.gear[g.key].carried_by}
-                      onChange={(e) => setGear(g.key, { carried_by: e.target.value })}
-                    >
-                      <option value="">Select a member…</option>
-                      {memberNames.map((n) => (
-                        <option key={n} value={n}>
-                          {n}
-                        </option>
-                      ))}
-                    </select>
-                  </td>
-                </tr>
+                    </Field>
+                    <Field label="Size" htmlFor={`${ids}-ps-${i}`}>
+                      <input id={`${ids}-ps-${i}`} className="input" placeholder="D2" value={p.size} onChange={(e) => setProblem(i, { size: e.target.value })} />
+                    </Field>
+                    <Field label="Terrain features" htmlFor={`${ids}-pf-${i}`} className="span-2">
+                      <input
+                        id={`${ids}-pf-${i}`}
+                        className="input"
+                        placeholder="e.g. Lee of ridgelines, gullies"
+                        value={p.terrain_features}
+                        onChange={(e) => setProblem(i, { terrain_features: e.target.value })}
+                      />
+                    </Field>
+                    <Field label="Trend & timing" htmlFor={`${ids}-pd-${i}`} className="span-2">
+                      <input
+                        id={`${ids}-pd-${i}`}
+                        className="input"
+                        placeholder="e.g. Rising with afternoon wind"
+                        value={p.danger_trend_timing}
+                        onChange={(e) => setProblem(i, { danger_trend_timing: e.target.value })}
+                      />
+                    </Field>
+                  </div>
+                  <div className="problem-where">
+                    <span className="field-label">Elevation · aspect</span>
+                    <div className="where">
+                      <ElevationPicker selected={p.elevations} onToggle={(b) => setProblem(i, { elevations: toggle(p.elevations, b) })} />
+                      <CompassPicker selected={p.aspects} onToggle={(a) => setProblem(i, { aspects: toggle(p.aspects, a) })} />
+                    </div>
+                  </div>
+                  {form.avalanche_problems.length > 1 && (
+                    <button type="button" className="icon-btn problem-remove" aria-label={`Remove problem ${i + 1}`} onClick={() => removeProblem(i)}>
+                      <Icon name="x" size={15} />
+                    </button>
+                  )}
+                </div>
               ))}
-            </tbody>
-          </table>
+            </div>
+            <button
+              type="button"
+              className="btn btn-dashed"
+              onClick={() => update('avalanche_problems', [...form.avalanche_problems, emptyProblem()])}
+            >
+              <Icon name="plus" size={14} />
+              Add problem
+            </button>
+
+            <Field label="Advisory key message" help="— recent avalanches and travel advice" htmlFor={`${ids}-km`} className="field-gap">
+              <textarea id={`${ids}-km`} className="input" rows={3} value={form.advisory_key_message} onChange={(e) => update('advisory_key_message', e.target.value)} />
+            </Field>
+          </SectionCard>
         </div>
-      </Section>
 
-      {/* Closing */}
-      <div className="field plan-closing">
-        <label>What gives us the confidence to carry out this plan?</label>
-        <textarea
-          rows={3}
-          value={form.confidence_statement}
-          onChange={(e) => update('confidence_statement', e.target.value)}
-        />
-      </div>
+        {/* 3.0 Terrain */}
+        <div id={`${ids}-terrain`} className="anchor">
+          <SectionCard {...cardProps('terrain')}>
+            <fieldset className="field">
+              <legend className="field-label">Today’s terrain mindset</legend>
+              <Guide>
+                <ul>
+                  <li>When danger is elevated, choose less exposed terrain.</li>
+                  <li>When terrain or conditions are unfamiliar, or the group is unsure, choose less exposed terrain.</li>
+                  <li>Think about going with an expert who can manage current conditions and more complex terrain.</li>
+                </ul>
+              </Guide>
+              <div className="options">
+                {TERRAIN_MINDSETS.map((m) => (
+                  <label key={m.value} className="option">
+                    <input
+                      type="radio"
+                      name={`${ids}-mindset`}
+                      value={m.value}
+                      checked={form.terrain_mindset === m.value}
+                      onChange={() => update('terrain_mindset', m.value)}
+                    />
+                    <span>
+                      <strong>{m.label}</strong>
+                      <span className="option-desc">{m.description}</span>
+                    </span>
+                  </label>
+                ))}
+              </div>
+              <p className="footnote">{TERRAIN_EXPOSURE_FOOTNOTE}</p>
+            </fieldset>
 
-      <div className="row plan-actions">
-        <button className="primary" type="submit">
-          Save plan
-        </button>
-        <button type="button" onClick={handleSignOff} disabled={signedOff}>
-          {signedOff ? 'Signed off' : 'Sign off plan'}
-        </button>
+            <Field label="Slopes and areas to avoid" htmlFor={`${ids}-avoid`}>
+              <textarea id={`${ids}-avoid`} className="input" rows={2} value={form.avoid_areas} onChange={(e) => update('avoid_areas', e.target.value)} />
+            </Field>
+            <Field label="Route, with check-in stops" help="— note important precautions" htmlFor={`${ids}-route`}>
+              <Guide title="Discuss route options">
+                <p>Discuss route options for today’s group, weather, and avalanche concerns.</p>
+                <ul>
+                  <li>Use maps, photos, and guidebooks to find avalanche slopes on the route.</li>
+                  <li>Find terrain with less exposure and less consequence.</li>
+                  <li>Think about your time plan in relation to the hazard.</li>
+                </ul>
+              </Guide>
+              <textarea id={`${ids}-route`} className="input" rows={3} value={form.route} onChange={(e) => update('route', e.target.value)} />
+            </Field>
+            <Field label="Alternative route" htmlFor={`${ids}-alt`}>
+              <textarea id={`${ids}-alt`} className="input" rows={2} value={form.alternative_route} onChange={(e) => update('alternative_route', e.target.value)} />
+            </Field>
+            <div className="grid-2">
+              <Field label="Turnaround point" htmlFor={`${ids}-tp`}>
+                <input id={`${ids}-tp`} className="input" value={form.turnaround_point} onChange={(e) => update('turnaround_point', e.target.value)} />
+              </Field>
+              <Field label="Turnaround time" htmlFor={`${ids}-tt`}>
+                <input id={`${ids}-tt`} className="input" type="time" value={form.turnaround_time} onChange={(e) => update('turnaround_time', e.target.value)} />
+              </Field>
+            </div>
+
+            <h3 className="subhead">Choose your terrain</h3>
+            <p className="help">Acknowledge consequences. Have an alternative plan.</p>
+            <ul className="checklist">
+              {STEP_C_ITEMS.map((c) => (
+                <li key={c.key} className="checklist-row checklist-row-single">
+                  <label className="check">
+                    <input type="checkbox" checked={form.step_c_checks[c.key]} onChange={(e) => setStepC(c.key, e.target.checked)} />
+                    <span>{c.label}</span>
+                  </label>
+                </li>
+              ))}
+            </ul>
+          </SectionCard>
+        </div>
+
+        {/* 4.0 Emergency */}
+        <div id={`${ids}-emergency`} className="anchor">
+          <SectionCard {...cardProps('emergency')}>
+            <Field label="Who else has our itinerary?" htmlFor={`${ids}-itin`}>
+              <input id={`${ids}-itin`} className="input" value={form.itinerary_shared_with} onChange={(e) => update('itinerary_shared_with', e.target.value)} />
+            </Field>
+            <h3 className="subhead">Group gear</h3>
+            <div className="table-wrap">
+              <table className="table">
+                <thead>
+                  <tr>
+                    <th scope="col">Item</th>
+                    <th scope="col">Carried by</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {GEAR_ITEMS.map((g) => (
+                    <tr key={g.key}>
+                      <td>
+                        <label className="check">
+                          <input type="checkbox" checked={form.gear[g.key].checked} onChange={(e) => setGear(g.key, { checked: e.target.checked })} />
+                          <span>{g.label}</span>
+                        </label>
+                      </td>
+                      <td className="cell-select">
+                        <select
+                          className="input"
+                          aria-label={`Who carries: ${g.label}`}
+                          value={form.gear[g.key].carried_by}
+                          onChange={(e) => setGear(g.key, { carried_by: e.target.value })}
+                        >
+                          <option value="">{memberNames.length ? 'Choose a member' : 'Add members in 1.0'}</option>
+                          {memberNames.map((n) => (
+                            <option key={n} value={n}>
+                              {n}
+                            </option>
+                          ))}
+                        </select>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </SectionCard>
+        </div>
+
+        {/* 5.0 Confidence and sign-off */}
+        <div id={`${ids}-confidence`} className="anchor">
+          <SectionCard
+            {...cardProps('confidence')}
+            footer={
+              <>
+                <SavedAt at={draft.savedAt} where="this browser" />
+                <div className="btn-row">
+                  {draft.signedOffAt ? (
+                    <button type="button" className="btn btn-primary" onClick={() => onGoTo('ride')}>
+                      Go to Ride
+                      <Icon name="arrow-right" size={14} />
+                    </button>
+                  ) : (
+                    <button type="button" className="btn btn-accent" onClick={signOff} disabled={signing}>
+                      {signing ? 'Signing off…' : 'Sign off plan'}
+                    </button>
+                  )}
+                </div>
+              </>
+            }
+          >
+            <Field label="What gives us the confidence to carry out this plan?" htmlFor={`${ids}-conf`}>
+              <textarea
+                id={`${ids}-conf`}
+                className="input"
+                rows={3}
+                value={form.confidence_statement}
+                onChange={(e) => update('confidence_statement', e.target.value)}
+              />
+            </Field>
+            {draft.signedOffAt ? (
+              <p className="callout callout-ok">
+                <Icon name="check" size={15} />
+                Signed off {formatDate(draft.signedOffAt.slice(0, 10))}. Copy the essentials into your field book before you leave.
+              </p>
+            ) : (
+              <p className="help">
+                Signing off moves the trip to Ride. You can keep editing the plan afterwards.
+                {total.done < total.total && ` ${total.total - total.done} items are still open.`}
+              </p>
+            )}
+            {signError && <p className="callout callout-error">{signError}</p>}
+          </SectionCard>
+        </div>
       </div>
-    </form>
+    </PhaseFrame>
   )
 }

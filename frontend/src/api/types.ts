@@ -66,6 +66,15 @@ export interface SnowProfileTest {
   created_at: string
 }
 
+// One entry in Debrief.decision_reflections. entry_ids point at observations
+// and snow profile tests from the same trip.
+export interface DecisionReflection {
+  id: string
+  decision: string
+  reflection: string
+  entry_ids: string[]
+}
+
 export interface Debrief {
   id: string
   trip_id: string
