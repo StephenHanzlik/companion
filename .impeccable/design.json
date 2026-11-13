@@ -1,0 +1,340 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-13T22:00:29.880872+00:00",
+  "title": "Design System: Companion",
+  "extensions": {
+    "colorMeta": {
+      "signal-lime": {
+        "role": "primary",
+        "displayName": "Signal Lime",
+        "canonical": "#d6f25c",
+        "tonalRamp": [
+          "#2e3a05",
+          "#4a5c0c",
+          "#6a8215",
+          "#8fac22",
+          "#b3d335",
+          "#d6f25c",
+          "#e6f79a",
+          "#f4fbd4"
+        ]
+      },
+      "graphite": {
+        "role": "neutral",
+        "displayName": "Graphite",
+        "canonical": "#1c1f22",
+        "tonalRamp": [
+          "#1c1f22",
+          "#33383c",
+          "#454b50",
+          "#5c6267",
+          "#8c9295",
+          "#d9dcdb",
+          "#e8eae9",
+          "#f6f7f6"
+        ]
+      },
+      "cool-stone": {
+        "role": "neutral",
+        "displayName": "Cool Stone",
+        "canonical": "#f1f2f1",
+        "tonalRamp": [
+          "#2b2e2d",
+          "#4a4e4d",
+          "#6d7271",
+          "#959a99",
+          "#bec2c1",
+          "#dfe2e1",
+          "#e7e9e8",
+          "#f1f2f1"
+        ]
+      },
+      "paper-white": {
+        "role": "neutral",
+        "displayName": "Paper White",
+        "canonical": "#ffffff"
+      },
+      "problem-sky": {
+        "role": "tertiary",
+        "displayName": "Problem Sky",
+        "canonical": "#5fb8e6",
+        "tonalRamp": [
+          "#0d2f42",
+          "#16496a",
+          "#226794",
+          "#3489bf",
+          "#5fb8e6",
+          "#8fcdee",
+          "#bfe2f5",
+          "#e6f4fb"
+        ]
+      },
+      "problem-sand": {
+        "role": "tertiary",
+        "displayName": "Problem Sand",
+        "canonical": "#d9b37a",
+        "tonalRamp": [
+          "#3b2a10",
+          "#5c431c",
+          "#7f5e2c",
+          "#a68047",
+          "#d9b37a",
+          "#e5c99f",
+          "#efdec4",
+          "#f8f0e4"
+        ]
+      },
+      "problem-rose": {
+        "role": "tertiary",
+        "displayName": "Problem Rose",
+        "canonical": "#e59a9a",
+        "tonalRamp": [
+          "#431616",
+          "#672525",
+          "#8e3a3a",
+          "#b85b5b",
+          "#e59a9a",
+          "#edb8b8",
+          "#f4d5d5",
+          "#fbeeee"
+        ]
+      },
+      "done-green": {
+        "role": "semantic",
+        "displayName": "Done Green",
+        "canonical": "#3d6a12"
+      },
+      "danger-rust": {
+        "role": "semantic",
+        "displayName": "Danger Rust",
+        "canonical": "#a3321b"
+      },
+      "debriefed-grey": {
+        "role": "neutral",
+        "displayName": "Debriefed Grey",
+        "canonical": "#8f969b"
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Landing hero headline only."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Landing section headings and the graphite close."
+      },
+      "page-title": {
+        "displayName": "Page title",
+        "purpose": "Trip name in the workspace header."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Card, section, entry and overview titles."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "All app copy, tabular figures."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Field labels and buttons."
+      },
+      "group-label": {
+        "displayName": "Group label",
+        "purpose": "Uppercase heading for row groups in cards, rail groups and overview sub-lists."
+      },
+      "record-code": {
+        "displayName": "Record code",
+        "purpose": "Sheet numbers, OBS/TEST/NOTE codes, section numbers 1.0-5.0. Nothing else."
+      }
+    },
+    "shadows": [
+      {
+        "name": "open-section",
+        "value": "0 10px 28px -18px rgba(28,31,34,0.45)",
+        "purpose": "The one open section card, with an ink border."
+      },
+      {
+        "name": "overview",
+        "value": "0 18px 40px -28px rgba(0,0,0,0.6)",
+        "purpose": "The graphite overview card."
+      },
+      {
+        "name": "overview-hero",
+        "value": "0 30px 60px -30px rgba(0,0,0,0.6), 0 2px 6px rgba(0,0,0,0.2)",
+        "purpose": "The example overview card floating over the landing hero photo."
+      },
+      {
+        "name": "figure",
+        "value": "0 40px 80px -48px rgba(28,31,34,0.5)",
+        "purpose": "Landing screenshot and example panels."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease",
+        "value": "cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "All state transitions (120-250ms) and the 700ms hero card rise."
+      },
+      {
+        "name": "rose-cell",
+        "value": "fill 180ms",
+        "purpose": "Rose cells recolour as the pickers change."
+      },
+      {
+        "name": "reduced-motion",
+        "value": "durations collapse to 0.01ms",
+        "purpose": "Honours prefers-reduced-motion."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "overview-stacks",
+        "value": "1180px"
+      },
+      {
+        "name": "rail-hides",
+        "value": "900px"
+      },
+      {
+        "name": "phone",
+        "value": "560px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Default ink action.",
+      "html": "<button class=\"ds-btn ds-btn-primary\">New trip</button>",
+      "css": ".ds-btn{display:inline-flex;align-items:center;gap:6px;height:36px;padding:0 14px;border:1px solid transparent;border-radius:3px;font:700 13px/1 -apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;cursor:pointer;transition:background-color 150ms cubic-bezier(0.16,1,0.3,1),border-color 150ms cubic-bezier(0.16,1,0.3,1)}.ds-btn:focus-visible{outline:2px solid #1c1f22;outline-offset:2px}.ds-btn-primary{background:#1c1f22;color:#fff}.ds-btn-primary:hover{background:#33383c}"
+    },
+    {
+      "name": "Accent Button",
+      "kind": "button",
+      "refersTo": "button-accent",
+      "description": "The primary call to action; one of lime's five roles.",
+      "html": "<button class=\"ds-btn-accent\">Start a trip</button>",
+      "css": ".ds-btn-accent{display:inline-flex;align-items:center;height:36px;padding:0 14px;border:1px solid rgba(28,31,34,0.12);border-radius:3px;background:#d6f25c;color:#1c1f22;font:700 13px/1 -apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;cursor:pointer;transition:background-color 150ms}.ds-btn-accent:hover{background:#c8e646}.ds-btn-accent:focus-visible{outline:2px solid #1c1f22;outline-offset:2px}"
+    },
+    {
+      "name": "Quiet Button",
+      "kind": "button",
+      "refersTo": "button-quiet",
+      "description": "Secondary action on white.",
+      "html": "<button class=\"ds-btn-quiet\">Cancel</button>",
+      "css": ".ds-btn-quiet{height:36px;padding:0 14px;border:1px solid #8c9295;border-radius:3px;background:#fff;color:#1c1f22;font:700 13px/1 -apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;cursor:pointer;transition:border-color 150ms}.ds-btn-quiet:hover{border-color:#1c1f22}.ds-btn-quiet:focus-visible{outline:2px solid #1c1f22;outline-offset:2px}"
+    },
+    {
+      "name": "Text Input",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Field with label above; focus is an ink ring, no glow.",
+      "html": "<label class=\"ds-field\"><span>Terrain features</span><input class=\"ds-input\" placeholder=\"Lee of ridgelines\"></label>",
+      "css": ".ds-field{display:grid;gap:6px;font:700 13px -apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;color:#1c1f22}.ds-input{min-height:36px;padding:7px 10px;border:1px solid #8c9295;border-radius:3px;background:#fff;color:#1c1f22;font:400 14px/1.4 -apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;transition:border-color 150ms,box-shadow 150ms}.ds-input:hover{border-color:#6f7578}.ds-input:focus{outline:none;border-color:#1c1f22;box-shadow:0 0 0 1px #1c1f22}"
+    },
+    {
+      "name": "Top Bar",
+      "kind": "nav",
+      "refersTo": "top-bar",
+      "description": "Graphite bar; active link underlined in lime, lime wordmark dot.",
+      "html": "<header class=\"ds-topbar\"><span class=\"ds-wordmark\">Companion<span>.</span></span><a class=\"ds-tl\" aria-current=\"page\" href=\"#\">Trips</a><a class=\"ds-tl\" href=\"#\">Weather</a></header>",
+      "css": ".ds-topbar{display:flex;align-items:center;gap:16px;height:56px;padding:0 24px;background:#1c1f22;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif}.ds-wordmark{color:#fff;font-weight:700;font-size:16px;margin-right:12px}.ds-wordmark span{color:#d6f25c}.ds-tl{display:inline-flex;align-items:center;height:100%;padding:0 12px;color:#b9bfc2;font-weight:600;font-size:14px;text-decoration:none}.ds-tl:hover{color:#fff}.ds-tl[aria-current=page]{color:#fff;box-shadow:inset 0 -3px #d6f25c}"
+    },
+    {
+      "name": "Section Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "Numbered disclosure; open state takes an ink border, lift and the lime count chip.",
+      "html": "<div class=\"ds-section ds-open\"><div class=\"ds-sec-head\"><span class=\"ds-no\">2.0</span><span class=\"ds-sec-title\">Anticipate the hazard</span><span class=\"ds-count\">3 of 5</span></div><div class=\"ds-rule\">Read the local avalanche advisory.</div></div>",
+      "css": ".ds-section{background:#fff;border:1px solid #d9dcdb;border-radius:4px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;color:#1c1f22;transition:border-color 150ms,box-shadow 200ms}.ds-open{border-color:#1c1f22;box-shadow:0 10px 28px -18px rgba(28,31,34,0.45)}.ds-sec-head{display:grid;grid-template-columns:44px 1fr auto;align-items:center;gap:10px;padding:16px 18px}.ds-no{font:600 13px ui-monospace,SFMono-Regular,Menlo,monospace;color:#5c6267}.ds-sec-title{font-weight:700;font-size:17px}.ds-count{padding:3px 8px;border-radius:3px;background:#d6f25c;font-size:12px;font-weight:700}.ds-rule{padding:10px 20px 10px 72px;background:#f6f7f6;border-top:1px solid #e8eae9;font-size:13px;color:#454b50}"
+    },
+    {
+      "name": "Overview Card",
+      "kind": "card",
+      "refersTo": "overview-card",
+      "description": "Graphite read-only trip summary with punched hole, segmented progress and ruled rows.",
+      "html": "<section class=\"ds-ov\"><span class=\"ds-hole\"></span><h2>Current Creek</h2><p class=\"ds-meta\"><span class=\"ds-mono\">Sheet 014</span> · Berthoud Pass</p><div class=\"ds-bar\"><i class=\"d\"></i><i class=\"d\"></i><i class=\"c\"></i><i></i><i></i></div><dl><div><dt>Party</dt><dd>4 members</dd></div><div><dt>Turnaround</dt><dd class=\"e\">Not set</dd></div></dl></section>",
+      "css": ".ds-ov{position:relative;width:300px;padding:20px 20px 16px;border-radius:6px;background:#1c1f22;color:#f4f4f1;box-shadow:0 18px 40px -28px rgba(0,0,0,0.6);font:14px/1.45 -apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;font-variant-numeric:tabular-nums}.ds-hole{position:absolute;top:16px;right:18px;width:11px;height:11px;border-radius:50%;background:#f1f2f1}.ds-ov h2{margin:0;font-size:18px;color:#fff}.ds-meta{margin:4px 0 0;font-size:13px;color:#a9afb3}.ds-mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#f4f4f1}.ds-bar{display:flex;gap:3px;margin-top:16px}.ds-bar i{flex:1;height:6px;background:#363a3e}.ds-bar i.d{background:#d6f25c}.ds-bar i.c{background:#f4f4f1}.ds-ov dl{margin:14px 0 0}.ds-ov dl div{display:flex;justify-content:space-between;padding:8px 0;border-top:1px solid #363a3e;font-size:13px}.ds-ov dt{color:#a9afb3}.ds-ov dd{margin:0;font-weight:700}.ds-ov dd.e{font-weight:400;color:#a9afb3}"
+    },
+    {
+      "name": "Compass Picker",
+      "kind": "custom",
+      "description": "3x3 aspect chips laid out as on a map; pressed chips go graphite.",
+      "html": "<div class=\"ds-compass\"><button class=\"ds-chip\">NW</button><button class=\"ds-chip\" aria-pressed=\"true\">N</button><button class=\"ds-chip\" aria-pressed=\"true\">NE</button><button class=\"ds-chip\">W</button><span class=\"ds-hub\"></span><button class=\"ds-chip\" aria-pressed=\"true\">E</button><button class=\"ds-chip\">SW</button><button class=\"ds-chip\">S</button><button class=\"ds-chip\">SE</button></div>",
+      "css": ".ds-compass{display:grid;grid-template-columns:repeat(3,36px);grid-template-rows:repeat(3,30px);gap:3px}.ds-chip{display:grid;place-items:center;padding:0;border:1px solid #8c9295;border-radius:2px;background:#fff;color:#1c1f22;font:700 12px -apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;cursor:pointer;transition:background-color 120ms,color 120ms}.ds-chip:hover{border-color:#1c1f22}.ds-chip[aria-pressed=true]{background:#1c1f22;border-color:#1c1f22;color:#fff}.ds-chip:focus-visible{outline:2px solid #1c1f22;outline-offset:2px}.ds-hub{display:grid;place-items:center}.ds-hub::after{content:'';width:5px;height:5px;border-radius:50%;background:#1c1f22}"
+    },
+    {
+      "name": "Status Marks",
+      "kind": "chip",
+      "description": "Shape carries phase: lime square Plan, graphite dot Ride, grey diamond Debriefed.",
+      "html": "<span class=\"ds-st\"><i class=\"ds-m ds-plan\"></i>Plan</span> <span class=\"ds-st\"><i class=\"ds-m ds-ride\"></i>Ride</span> <span class=\"ds-st\"><i class=\"ds-m ds-done\"></i>Debriefed</span>",
+      "css": ".ds-st{display:inline-flex;align-items:center;gap:7px;margin-right:16px;font:600 13px -apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;color:#1c1f22}.ds-m{display:inline-block;width:9px;height:9px}.ds-plan{background:#d6f25c;box-shadow:0 0 0 1px #1c1f22}.ds-ride{background:#1c1f22;border-radius:50%}.ds-done{width:8px;height:8px;background:#8f969b;transform:rotate(45deg)}"
+    },
+    {
+      "name": "Badge",
+      "kind": "chip",
+      "refersTo": "badge",
+      "description": "Entry type tag; flag variant for red flags.",
+      "html": "<span class=\"ds-badge\">Extended column test</span> <span class=\"ds-badge ds-flag\">Red flag</span>",
+      "css": ".ds-badge{display:inline-flex;align-items:center;height:22px;padding:0 7px;border-radius:2px;background:#f6f7f6;box-shadow:inset 0 0 0 1px #d9dcdb;font:700 12px -apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;color:#1c1f22}.ds-flag{background:#fde7e2;box-shadow:inset 0 0 0 1px #e3a897;color:#8c2b17}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Trip Spec Sheet",
+    "overview": "Every trip reads like a technical spec sheet drawn with a Swiss topographic sheet's rigor. The ground is cool stone, the work happens in self-contained white cards with hairline borders, and one graphite overview card summarizes the trip in the margin the way a sheet's legend does. The chrome (top bar, overview card, landing close) is graphite; the paper is white; a single signal lime marks what is done, current or ready to start.\n\nDensity is that of a working document, not a dashboard: 14px body, tabular figures everywhere, numbered sections (1.0 to 5.0), record codes (OBS-01, TEST-01, NOTE-01) and sheet numbers set in monospace. The map-sheet vocabulary arrives through the aspect-elevation rose, the 3x3 compass picker and the section numbering, not through decoration. The system rejects the generic SaaS sidebar-and-cards look and the endless scrolling form: work is broken into cards you open one at a time while the overview fills in.",
+    "keyCharacteristics": [
+      "Cool stone ground, white hairline cards, graphite chrome, one lime accent.",
+      "System UI sans for everything; monospace only for record codes and measurements.",
+      "Tabular numerals globally.",
+      "Flat surfaces; shadow appears only on the open section card and the graphite overview card.",
+      "Shape carries status (square, dot, diamond); colour reinforces it.",
+      "The aspect-elevation rose is the signature graphic and redraws live from the pickers."
+    ],
+    "rules": [
+      {
+        "name": "The Five Roles Rule",
+        "body": "Lime appears only in the five roles listed under Primary. A new surface that wants lime must be one of those five things.",
+        "section": "colors"
+      },
+      {
+        "name": "The Separate Palettes Rule",
+        "body": "Phase marks stay outside the avalanche-problem palette: Ride is a graphite dot and Debriefed a **Debriefed Grey** (`debriefed-grey`) diamond, never sky, sand or rose.",
+        "section": "colors"
+      },
+      {
+        "name": "The Mono Means Measured Rule",
+        "body": "Monospace is only for record codes and measurements. Never set prose, labels or headings in mono.",
+        "section": "typography"
+      },
+      {
+        "name": "The Tabular Rule",
+        "body": "Figures are tabular everywhere (`font-variant-numeric: tabular-nums` on the root), including date and time inputs.",
+        "section": "typography"
+      },
+      {
+        "name": "The Lift Means Focus Rule",
+        "body": "Only the open section and the overview card lift off the page in the app. Closed cards, inputs and rows stay flat.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "**Do** keep lime to its five roles: progress done segments, the open in-progress section's count chip, the Plan status mark, the primary CTA, and the active top-bar underline and wordmark dot.",
+      "**Do** set record codes and measurements in mono (sheet numbers, OBS-01 / TEST-01 / NOTE-01, section numbers 1.0-5.0) and everything else in the system sans.",
+      "**Do** group items inside a card as hairline-divided rows under a 1px graphite rule.",
+      "**Do** carry status with shape first (square, dot, diamond) and colour second.",
+      "**Do** keep the overview card graphite, read-only and beside the work, filling in as sections complete.",
+      "**Do** keep figures tabular."
+    ],
+    "donts": [
+      "**Don't** use coloured side stripes on cards, rows, callouts or entries.",
+      "**Don't** nest bordered cards inside cards.",
+      "**Don't** give phase marks a colour from the avalanche-problem palette (sky, sand, rose).",
+      "**Don't** add shadows to closed cards, rows or inputs; lift is reserved for the open section and the overview card.",
+      "**Don't** use monospace for prose, labels or headings."
+    ]
+  }
+}
