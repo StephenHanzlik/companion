@@ -4,6 +4,10 @@ A backcountry trip companion: **Plan** (prepare), **Ride** (record observations 
 snow profile tests in the field), **Debrief** (summarize, reflect, submit). Personal
 project, not affiliated with or endorsed by any avalanche education organization.
 
+![Companion landing page: "Do the thinking before the skin track." over a snowy mountain photo, with an example trip overview card showing aspect roses](docs/landing.jpg)
+
+<sub>Hero photo by [Doug Duffee](https://unsplash.com/@rareair) on [Unsplash](https://unsplash.com/photos/pine-trees-under-white-and-blue-sky-Glhx0spvqXI).</sub>
+
 ## Stack
 
 - **Backend**: Go, `chi` router, `pgx`, `sqlc` for typed SQL (no ORM).
