@@ -230,6 +230,17 @@ export default function RideTab({ trip, sheet, header, onGoTo }: PhaseProps) {
   return (
     <PhaseFrame header={header} aside={aside}>
       <div className="stack">
+        <details className="card reminders">
+          <summary className="card-head">
+            <span className="card-title">Field reminders</span>
+            <span className="card-aside help">Departure check and the Stay aware loop</span>
+            <Icon name="chevron-down" className="section-chevron" />
+          </summary>
+          <div className="reminders-body">
+            <DepartureCheck />
+            <StayAwareLoop />
+          </div>
+        </details>
         <Card title="Add to the field record" className="card-form">
           <form onSubmit={handleSubmit} className="card-body">
             <div className="form-top">
@@ -416,17 +427,6 @@ export default function RideTab({ trip, sheet, header, onGoTo }: PhaseProps) {
           )}
         </Card>
 
-        <details className="card reminders">
-          <summary className="card-head">
-            <span className="card-title">Field reminders</span>
-            <span className="card-aside help">Departure check and the Stay aware loop</span>
-            <Icon name="chevron-down" className="section-chevron" />
-          </summary>
-          <div className="reminders-body">
-            <DepartureCheck />
-            <StayAwareLoop />
-          </div>
-        </details>
       </div>
     </PhaseFrame>
   )

@@ -8,9 +8,9 @@ type Props = {
 }
 
 const FLOW = [
-  { where: 'At your desk', field: false, title: 'Plan the trip', body: 'Group, hazard, terrain and emergency plan, worked through in full.' },
-  { where: 'Field book', field: true, title: 'Copy the essentials', body: 'Route, turnaround, problems and concerns go on paper before you leave.' },
-  { where: 'On the tour', field: true, title: 'Note what you see', body: 'Observations, tests and plan changes, jotted by hand.' },
+  { where: 'At your desk', field: false, title: 'Plan the trip', body: 'Group, hazard, terrain, and emergency plan, worked through in full.' },
+  { where: 'Field book', field: true, title: 'Copy the essentials', body: 'Route, turnaround, problems, and concerns go on paper before you leave.' },
+  { where: 'On the tour', field: true, title: 'Note what you see', body: 'Observations, tests, and plan changes, jotted by hand.' },
   { where: 'At your desk', field: false, title: 'Write up the day', body: 'Turn your notes into timestamped, located entries in Ride.' },
   { where: 'At your desk', field: false, title: 'Debrief', body: 'Reflect on decision points and capture what you’d change.' },
 ]
@@ -62,7 +62,7 @@ export default function Landing({ onStartTrip }: Props) {
           <div className="lp-hero-copy">
             <h1>Do the thinking before the skin track.</h1>
             <p>
-              Companion is the desk side of your field book. Work through Plan, Ride and Debrief in depth, carry the essentials uphill on
+              Companion is the desktop side of your field book. Work through Plan, Ride, and Debrief in depth, carry the essentials uphill on
               paper, and come home to one connected record of the tour.
             </p>
             <div className="lp-ctas">
@@ -159,7 +159,7 @@ export default function Landing({ onStartTrip }: Props) {
         <Phase
           name="Ride"
           heading="Write up the day while it’s fresh."
-          lede="Your hand notes become entries with a time, a place and a reason they matter."
+          lede="Your hand notes become entries with a time, a place, and a reason they matter."
           points={['Field observations and red flags', 'Snow profile tests', 'Plan changes and tactics used to reduce risk']}
         >
           <div className="lp-panel" aria-label="Example field record">
