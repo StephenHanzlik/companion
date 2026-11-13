@@ -1,6 +1,8 @@
 import type { Debrief, Observation, Plan, SnowProfileTest, Trip, WeatherSummary } from './types'
 
-const BASE_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:8080'
+// In dev the API runs on localhost:8080. In a production build the Worker
+// serves both the app and /api, so calls go to the same origin.
+const BASE_URL = import.meta.env.VITE_API_URL ?? (import.meta.env.DEV ? 'http://localhost:8080' : '')
 
 // Seeded by db/seed/seed.sql. Stands in for auth until the real thing exists.
 export const DEMO_USER_ID = '00000000-0000-0000-0000-000000000001'
