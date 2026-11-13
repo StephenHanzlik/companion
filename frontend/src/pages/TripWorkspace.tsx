@@ -2,11 +2,22 @@ import { useEffect, useState } from 'react'
 import { api } from '../api/client'
 import type { Trip } from '../api/types'
 import { stateName } from '../api/states'
+import { formatDateRange } from '../api/format'
+import TripProgress, { STAGES, stageIndex } from '../components/TripProgress'
 import PlanTab from './PlanTab'
 import RideTab from './RideTab'
 import DebriefTab from './DebriefTab'
 
 type Tab = 'plan' | 'ride' | 'debrief'
+
+// Each phase tab takes its colour from the trip's stage: done, current, or ahead.
+function stageClass(phase: Tab, status: string | undefined): string {
+  const phaseIdx = STAGES.findIndex((s) => s.phase === phase)
+  const current = stageIndex(status)
+  if (phaseIdx < current) return 'stage-done'
+  if (phaseIdx === current) return 'stage-current'
+  return 'stage-ahead'
+}
 
 export default function TripWorkspace({ tripId, onBack }: { tripId: string; onBack: () => void }) {
   const [trip, setTrip] = useState<Trip | null>(null)
@@ -22,23 +33,30 @@ export default function TripWorkspace({ tripId, onBack }: { tripId: string; onBa
         ← Back to trips
       </button>
 
-      <div className="card">
-        <h2>{trip?.title ?? 'Loading…'}</h2>
-        <p className="muted">
-          {stateName(trip?.state ?? null) ?? 'no state'} · status: {trip?.status}
-        </p>
+      <div className="card trip-banner">
+        <div className="trip-banner-main">
+          <h2>{trip?.title ?? 'Loading…'}</h2>
+          {trip && (
+            <div className="trip-banner-meta">
+              <span>{stateName(trip.state) ?? 'No state'}</span>
+              <span className="trip-banner-sep" aria-hidden="true">·</span>
+              <span>{formatDateRange(trip.start_date, trip.end_date)}</span>
+            </div>
+          )}
+        </div>
+        {trip && <TripProgress status={trip.status} />}
       </div>
 
       <div className="tabs phase-tabs">
-        <button className={tab === 'plan' ? 'active' : ''} onClick={() => setTab('plan')}>
+        <button className={`${tab === 'plan' ? 'active ' : ''}${stageClass('plan', trip?.status)}`} onClick={() => setTab('plan')}>
           Plan
         </button>
-        <span className="phase-arrow" aria-hidden="true">→</span>
-        <button className={tab === 'ride' ? 'active' : ''} onClick={() => setTab('ride')}>
+        <span className={`phase-arrow ${stageIndex(trip?.status) >= 1 ? 'reached' : ''}`} aria-hidden="true">→</span>
+        <button className={`${tab === 'ride' ? 'active ' : ''}${stageClass('ride', trip?.status)}`} onClick={() => setTab('ride')}>
           Ride
         </button>
-        <span className="phase-arrow" aria-hidden="true">→</span>
-        <button className={tab === 'debrief' ? 'active' : ''} onClick={() => setTab('debrief')}>
+        <span className={`phase-arrow ${stageIndex(trip?.status) >= 2 ? 'reached' : ''}`} aria-hidden="true">→</span>
+        <button className={`${tab === 'debrief' ? 'active ' : ''}${stageClass('debrief', trip?.status)}`} onClick={() => setTab('debrief')}>
           Debrief
         </button>
       </div>
