@@ -735,3 +735,202 @@ label {
     order: -1;
   }
 }
+
+/* Ride page ----------------------------------------------------------------- */
+
+.departure-check ul {
+  margin: 0.5rem 0 0;
+  padding-left: 1.1rem;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.hint-list {
+  margin: 0;
+  padding-left: 1.1rem;
+  line-height: 1.7;
+}
+
+.hint-list a {
+  color: #2f5d3a;
+}
+
+.field-card .field-line {
+  margin-top: 0.3rem;
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+.field-tag {
+  display: inline-block;
+  min-width: 6.5rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #6b6f66;
+}
+
+.location-picker-map .map-box {
+  height: 240px;
+  width: 100%;
+  border-radius: 8px;
+  border: 1px solid #d9ddd7;
+}
+
+.location-picker-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.75rem;
+  margin: 0.5rem 0;
+}
+
+/* Stay Aware loop: high contrast, large text, light and dark. */
+.stay-aware {
+  --sa-ink: #15201a;
+  --sa-card: #ffffff;
+  --sa-border: #1f3a28;
+  --sa-accent: #2f5d3a;
+  --sa-bar: #1f3a28;
+  --sa-bar-ink: #ffffff;
+  margin-bottom: 1rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  .stay-aware {
+    --sa-ink: #f2f5f1;
+    --sa-card: #1c251e;
+    --sa-border: #9fc2a6;
+    --sa-accent: #9fd6a8;
+    --sa-bar: #9fd6a8;
+    --sa-bar-ink: #10170f;
+  }
+}
+
+.sa-heading {
+  margin: 0 0 0.75rem;
+  font-size: 1.25rem;
+  color: var(--sa-ink);
+}
+
+/* Three columns: label bar | return track | step cards. */
+.sa-loop {
+  display: grid;
+  grid-template-columns: 2.25rem 1.75rem minmax(0, 1fr);
+  color: var(--sa-ink);
+}
+
+.sa-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: var(--sa-bar);
+  color: var(--sa-bar-ink);
+  overflow: hidden;
+}
+
+.sa-bar span {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* Return arrow: runs from the last card back up to the first. */
+.sa-return {
+  position: relative;
+  color: var(--sa-accent);
+  margin: 1.25rem 0;
+}
+
+.sa-return > svg:first-child {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.sa-return-head {
+  position: absolute;
+  top: -6px;
+  right: -2px;
+}
+
+.sa-steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.sa-steps li {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.sa-card {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 0.9rem 1rem;
+  background: var(--sa-card);
+  border: 2px solid var(--sa-border);
+  border-radius: 12px;
+}
+
+.sa-icon {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 999px;
+  border: 2px solid var(--sa-border);
+  color: var(--sa-accent);
+}
+
+.sa-title {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.sa-body {
+  margin: 0.2rem 0 0;
+  font-size: 0.95rem;
+}
+
+.sa-down {
+  align-self: center;
+  color: var(--sa-accent);
+  margin: 0.25rem 0;
+}
+
+@media (max-width: 720px) {
+  .sa-loop {
+    grid-template-columns: 1.75rem 1.25rem minmax(0, 1fr);
+  }
+
+  .sa-icon {
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+}
+
+/* Trip workspace: Plan -> Ride -> Debrief, with arrows between the phases. */
+.phase-tabs {
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.phase-arrow {
+  color: #9aa396;
+  font-size: 1.1rem;
+  padding: 0 0.1rem;
+}
