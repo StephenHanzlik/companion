@@ -141,7 +141,7 @@ export function SavedAt({ at, where }: { at: string | null; where?: string }) {
 }
 
 // A section prompt with its source links read inline at "{links}":
-// "Read the local avalanche advisory at avalanche.org or avalanche.ca."
+// "See what expert forecasters are saying at avalanche.org or avalanche.ca, …"
 function withLinks(rule: string, links?: SourceLink[]): ReactNode {
   const [before, after] = rule.split('{links}')
   if (after === undefined) return rule
