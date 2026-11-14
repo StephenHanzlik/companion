@@ -15,8 +15,7 @@ import { stateName } from '../api/states'
 import { formatDate } from '../api/format'
 import { ASPECT_NAMES } from '../api/planForm'
 import LocationPicker, { PlaceValue } from '../components/LocationPicker'
-import DepartureCheck from '../components/DepartureCheck'
-import StayAwareLoop from '../components/StayAwareLoop'
+import FieldReminders from '../components/FieldReminders'
 import { CompassPicker } from '../components/AspectPicker'
 import { Card, Field } from '../components/Form'
 import Icon from '../components/Icon'
@@ -236,10 +235,7 @@ export default function RideTab({ trip, sheet, header, onGoTo }: PhaseProps) {
             <span className="card-aside help">Departure check and the Stay aware loop</span>
             <Icon name="chevron-down" className="section-chevron" />
           </summary>
-          <div className="reminders-body">
-            <DepartureCheck />
-            <StayAwareLoop />
-          </div>
+          <FieldReminders />
         </details>
         <Card title="Add to the field record" className="card-form">
           <form onSubmit={handleSubmit} className="card-body">

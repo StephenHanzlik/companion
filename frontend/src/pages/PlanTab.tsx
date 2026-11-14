@@ -30,6 +30,7 @@ import { stateName } from '../api/states'
 import { formatDate } from '../api/format'
 import { Count, Field, Guide, SavedAt, SectionCard } from '../components/Form'
 import Icon from '../components/Icon'
+import { SignOffDialog } from '../components/FieldReminders'
 import { OverviewCard, OvList, OvNote, Progress } from '../components/Overview'
 import Rose, { problemColor, roseLabel } from '../components/Rose'
 import { PhaseFrame, PhaseProps } from './TripWorkspace'
@@ -76,6 +77,7 @@ export default function PlanTab({ trip, sheet, header, onStatusChange, onGoTo }:
   const [saveFailed, setSaveFailed] = useState(false)
   const [signing, setSigning] = useState(false)
   const [signError, setSignError] = useState<string | null>(null)
+  const [showReminders, setShowReminders] = useState(false)
   const form = draft.form
   const ids = useId()
 
@@ -141,6 +143,7 @@ export default function PlanTab({ trip, sheet, header, onStatusChange, onGoTo }:
     const next = { ...draft, signedOffAt, savedAt: signedOffAt }
     if (!savePlanDraft(trip.id, next)) setSaveFailed(true)
     setDraft(next)
+    setShowReminders(true)
     try {
       if (trip.status === 'planning') await onStatusChange('active')
     } catch (e) {
@@ -275,6 +278,7 @@ export default function PlanTab({ trip, sheet, header, onStatusChange, onGoTo }:
 
   return (
     <PhaseFrame header={header} aside={aside}>
+      {showReminders && <SignOffDialog onClose={() => setShowReminders(false)} onGoToRide={() => onGoTo('ride')} />}
       <div className="stack">
         {/* 1.0 Group */}
         <div id={`${ids}-group`} className="anchor">
