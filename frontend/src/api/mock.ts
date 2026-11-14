@@ -135,16 +135,14 @@ function seed(): Db {
       {
         problem_type: 'Wind slab',
         size: 'D1.5–2',
-        elevations: ['ALP', 'NTL'],
-        aspects: ['N', 'NE', 'E'],
+        cells: ['N:ALP', 'NE:ALP', 'E:ALP', 'NE:NTL', 'E:NTL'],
         terrain_features: 'Lee of ridgelines, cross-loaded gullies',
         danger_trend_timing: "Rising with Friday's wind",
       },
       {
         problem_type: 'Persistent slab',
         size: 'D2',
-        elevations: ['NTL'],
-        aspects: ['NW', 'N', 'NE'],
+        cells: ['NW:NTL', 'N:NTL', 'NE:NTL', 'N:BTL'],
         terrain_features: 'Shallow, rocky areas',
         danger_trend_timing: 'Steady; slow to heal',
       },
@@ -163,8 +161,8 @@ function seed(): Db {
       { name: 'Jordan', contact: '', emergency_contact: '' },
     ]
     form.avalanche_problems = [
-      { problem_type: 'Wind slab', size: 'D1.5', elevations: ['ALP', 'NTL'], aspects: ['NE', 'E', 'SE'], terrain_features: '', danger_trend_timing: '' },
-      { problem_type: 'Persistent slab', size: 'D2', elevations: ['NTL', 'BTL'], aspects: ['N', 'NE'], terrain_features: '', danger_trend_timing: '' },
+      { problem_type: 'Wind slab', size: 'D1.5', cells: ['NE:ALP', 'E:ALP', 'SE:ALP', 'E:NTL'], terrain_features: '', danger_trend_timing: '' },
+      { problem_type: 'Persistent slab', size: 'D2', cells: ['N:NTL', 'NE:NTL', 'N:BTL'], terrain_features: '', danger_trend_timing: '' },
     ]
     form.terrain_mindset = 'keep_it_simple'
     form.turnaround_point = 'Second bench'

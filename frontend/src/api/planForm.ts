@@ -59,14 +59,26 @@ export const PROBLEM_TYPES = [
   'Glide',
 ]
 
+// Where a problem sits, as individual aspect + elevation band cells on the
+// rose, e.g. "NE:ALP". A problem can cover NE above treeline and only NE near
+// treeline without covering every aspect in every band.
+export const cellKey = (aspect: string, band: string) => `${aspect}:${band}`
+
+export const parseCell = (cell: string): [string, string] => {
+  const [aspect, band] = cell.split(':')
+  return [aspect, band]
+}
+
 export interface AvalancheProblem {
   problem_type: string
   size: string
-  elevations: string[]
-  aspects: string[]
+  cells: string[]
   terrain_features: string
   danger_trend_timing: string
 }
+
+// Every aspect × band combination, for drafts saved before cells existed.
+export const cellsFrom = (aspects: string[], bands: string[]) => aspects.flatMap((a) => bands.map((b) => cellKey(a, b)))
 
 // Terrain mindset: pick a value, then describe the terrain choice. Wording is
 // from the guidance page.
@@ -150,8 +162,7 @@ export const emptyMember = (): GroupMember => ({ name: '', contact: '', emergenc
 export const emptyProblem = (): AvalancheProblem => ({
   problem_type: '',
   size: '',
-  elevations: [],
-  aspects: [],
+  cells: [],
   terrain_features: '',
   danger_trend_timing: '',
 })
@@ -207,7 +218,7 @@ export const namedMembers = (form: PlanningForm) => form.group.filter((m) => fil
 
 // A problem counts once it says what it is and where it is.
 export const describedProblems = (form: PlanningForm) =>
-  form.avalanche_problems.filter((p) => filled(p.problem_type) && p.aspects.length > 0 && p.elevations.length > 0)
+  form.avalanche_problems.filter((p) => filled(p.problem_type) && p.cells.length > 0)
 
 // Each section's progress as items done out of items asked for. These mirror
 // the prompts in the section, one point each.
@@ -262,9 +273,17 @@ export function normalizePlanningForm(raw: unknown): PlanningForm {
     group: Array.isArray(r.group) && r.group.length > 0 ? r.group.map((m) => ({ ...emptyMember(), ...m })) : base.group,
     group_checks: { ...base.group_checks, ...(r.group_checks ?? {}) },
     avalanche_problems: Array.isArray(r.avalanche_problems)
-      ? r.avalanche_problems.map((p) => ({ ...emptyProblem(), ...p }))
+      ? r.avalanche_problems.map(normalizeProblem)
       : base.avalanche_problems,
     step_c_checks: { ...base.step_c_checks, ...(r.step_c_checks ?? {}) },
     gear: { ...base.gear, ...(r.gear ?? {}) },
   }
+}
+
+// Older drafts stored aspects and elevations as two separate lists.
+function normalizeProblem(raw: unknown): AvalancheProblem {
+  const r = (raw && typeof raw === 'object' ? raw : {}) as Partial<AvalancheProblem> & { aspects?: string[]; elevations?: string[] }
+  const { aspects, elevations, ...rest } = r
+  const cells = Array.isArray(r.cells) ? r.cells : cellsFrom(aspects ?? [], elevations ?? [])
+  return { ...emptyProblem(), ...rest, cells }
 }

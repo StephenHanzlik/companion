@@ -1,7 +1,9 @@
 import { useEffect, useId, useRef, useState } from 'react'
 import {
+  ASPECTS,
   AvalancheProblem,
   ELEVATION_BANDS,
+  cellKey,
   GEAR_ITEMS,
   GROUP_CHECKS,
   GearKey,
@@ -26,11 +28,10 @@ import {
 import { PlanDraft, loadPlanDraft, savePlanDraft } from '../api/planStore'
 import { stateName } from '../api/states'
 import { formatDate } from '../api/format'
-import { CompassPicker, ElevationPicker } from '../components/AspectPicker'
 import { Count, Field, Guide, SavedAt, SectionCard } from '../components/Form'
 import Icon from '../components/Icon'
 import { OverviewCard, OvList, OvNote, Progress } from '../components/Overview'
-import Rose, { problemColor } from '../components/Rose'
+import Rose, { problemColor, roseLabel } from '../components/Rose'
 import { PhaseFrame, PhaseProps } from './TripWorkspace'
 
 const toggle = (list: string[], value: string) =>
@@ -108,6 +109,15 @@ export default function PlanTab({ trip, sheet, header, onStatusChange, onGoTo }:
   // Problems
   const setProblem = (i: number, patch: Partial<AvalancheProblem>) =>
     update('avalanche_problems', form.avalanche_problems.map((p, idx) => (idx === i ? { ...p, ...patch } : p)))
+  // Rose picking: single cells, a whole aspect wedge, or a whole band ring.
+  const setCells = (i: number, cells: string[]) => setProblem(i, { cells })
+  const toggleCells = (i: number, keys: string[]) => {
+    const current = form.avalanche_problems[i].cells
+    const allOn = keys.every((k) => current.includes(k))
+    setCells(i, allOn ? current.filter((c) => !keys.includes(c)) : [...current, ...keys.filter((k) => !current.includes(k))])
+  }
+  const aspectCells = (aspect: string) => ELEVATION_BANDS.map((b) => cellKey(aspect, b.key))
+  const bandCells = (band: string) => ASPECTS.map((a) => cellKey(a, band))
   const removeProblem = (i: number) =>
     update('avalanche_problems', form.avalanche_problems.filter((_, idx) => idx !== i))
 
@@ -173,7 +183,7 @@ export default function PlanTab({ trip, sheet, header, onStatusChange, onGoTo }:
 
   const problems = form.avalanche_problems
     .map((p, i) => ({ p, color: problemColor(i) }))
-    .filter(({ p }) => p.problem_type.trim() && p.aspects.length > 0 && p.elevations.length > 0)
+    .filter(({ p }) => p.problem_type.trim() && p.cells.length > 0)
 
   const aside = (
     <OverviewCard
@@ -212,7 +222,7 @@ export default function PlanTab({ trip, sheet, header, onStatusChange, onGoTo }:
             <div className="ov-rose-grid">
               {problems.map(({ p, color }, i) => (
                 <figure key={i} className="ov-rose">
-                  <Rose aspects={p.aspects} elevations={p.elevations} color={color} />
+                  <Rose cells={p.cells} color={color} />
                   <figcaption>
                     <i style={{ background: color }} aria-hidden="true" />
                     {p.problem_type}
@@ -351,15 +361,15 @@ export default function PlanTab({ trip, sheet, header, onStatusChange, onGoTo }:
               <Guide title="What the fields mean">
                 <ul>
                   <li>
-                    <strong>Elevation:</strong> ALP is above treeline, NTL near treeline, BTL below treeline, the bands
-                    avalanche forecasts use.
+                    <strong>The rose:</strong> each wedge is an aspect, the direction a slope faces. The rings are
+                    elevation bands: the center is above treeline (ALP), the middle near treeline (NTL), and the outside
+                    below treeline (BTL). Click every cell the advisory names; a letter selects its whole wedge, and the
+                    ALP, NTL, and BTL buttons select a whole ring.
                   </li>
                   <li>
                     <strong>Size:</strong> destructive size, from D1 (relatively harmless to people) to D5 (largest known).
                   </li>
-                  <li>
-                    <strong>Aspect:</strong> the direction a slope faces. Pick every aspect the advisory names.
-                  </li>
+
                 </ul>
               </Guide>
             </div>
@@ -409,11 +419,38 @@ export default function PlanTab({ trip, sheet, header, onStatusChange, onGoTo }:
                     </Field>
                   </div>
                   <div className="problem-where">
-                    <span className="field-label">Elevation · aspect</span>
-                    <div className="where">
-                      <ElevationPicker selected={p.elevations} onToggle={(b) => setProblem(i, { elevations: toggle(p.elevations, b) })} />
-                      <CompassPicker selected={p.aspects} onToggle={(a) => setProblem(i, { aspects: toggle(p.aspects, a) })} />
+                    <span className="field-label">
+                      Where <span className="field-help">— click the rose</span>
+                    </span>
+                    <Rose
+                      className="rose-picker"
+                      cells={p.cells}
+                      color={problemColor(i)}
+                      label={`Problem ${i + 1}: aspects and elevation bands`}
+                      onToggle={(cell) => setCells(i, toggle(p.cells, cell))}
+                      onToggleAspect={(a) => toggleCells(i, aspectCells(a))}
+                    />
+                    <div className="band-toggles" role="group" aria-label="Whole elevation bands">
+                      {ELEVATION_BANDS.map((b, bi) => (
+                        <button
+                          key={b.key}
+                          type="button"
+                          className="chip band-chip"
+                          aria-pressed={bandCells(b.key).every((c) => p.cells.includes(c))}
+                          title={`Every aspect ${b.label.toLowerCase()}`}
+                          onClick={() => toggleCells(i, bandCells(b.key))}
+                        >
+                          <i className={`band-${bi}`} aria-hidden="true" />
+                          {b.key}
+                        </button>
+                      ))}
+                      <button type="button" className="link-btn band-clear" disabled={p.cells.length === 0} onClick={() => setCells(i, [])}>
+                        Clear
+                      </button>
                     </div>
+                    <p className="rose-summary" aria-live="polite">
+                      {p.cells.length ? roseLabel(p.cells) : 'Nothing selected yet.'}
+                    </p>
                   </div>
                   {form.avalanche_problems.length > 1 && (
                     <button type="button" className="icon-btn problem-remove" aria-label={`Remove problem ${i + 1}`} onClick={() => removeProblem(i)}>

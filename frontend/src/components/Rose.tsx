@@ -1,8 +1,11 @@
-import { ASPECTS, ASPECT_NAMES, ELEVATION_BANDS } from '../api/planForm'
+import type { KeyboardEvent } from 'react'
+import { ASPECTS, ASPECT_NAMES, ELEVATION_BANDS, cellKey } from '../api/planForm'
 
 // Aspect–elevation rose: eight aspects around, three elevation bands from the
 // center out (above treeline in the middle, below treeline on the outside),
-// the way avalanche forecasts draw them.
+// the way avalanche forecasts draw them. Each cell is one aspect in one band.
+// Pass onToggle to make it the picker: cells toggle on click, Enter or Space,
+// and the aspect letters toggle a whole wedge.
 
 // Fill per avalanche problem, in order. Keep in sync with --problem-* in CSS.
 export const PROBLEM_COLORS = ['#d6f25c', '#5fb8e6', '#d9b37a', '#e59a9a']
@@ -26,50 +29,101 @@ function sector(r0: number, r1: number, a0: number, a1: number): string {
   return `M${x0} ${y0} A${r1} ${r1} 0 0 1 ${x1} ${y1} L${x2} ${y2} A${r0} ${r0} 0 0 0 ${x3} ${y3} Z`
 }
 
-export function roseLabel(aspects: string[], elevations: string[]): string {
-  if (aspects.length === 0 || elevations.length === 0) return 'No aspects or elevations selected'
-  const a = ASPECTS.filter((x) => aspects.includes(x)).map((x) => ASPECT_NAMES[x]).join(', ')
-  const e = ELEVATION_BANDS.filter((b) => elevations.includes(b.key)).map((b) => b.label.toLowerCase()).join(', ')
-  return `${a}; ${e}`
+const bandLabel = (band: string) => ELEVATION_BANDS.find((b) => b.key === band)?.label.toLowerCase() ?? band
+
+// "Above treeline: N, NE. Near treeline: NE."
+export function roseLabel(cells: string[]): string {
+  if (cells.length === 0) return 'No aspects or elevations selected'
+  return ELEVATION_BANDS.map((b) => {
+    const aspects = ASPECTS.filter((a) => cells.includes(cellKey(a, b.key)))
+    return aspects.length ? `${b.label}: ${aspects.join(', ')}.` : ''
+  })
+    .filter(Boolean)
+    .join(' ')
+}
+
+const activate = (fn: () => void) => (e: KeyboardEvent) => {
+  if (e.key === 'Enter' || e.key === ' ') {
+    e.preventDefault()
+    fn()
+  }
 }
 
 export default function Rose({
-  aspects,
-  elevations,
+  cells,
   color,
   label,
   className,
+  onToggle,
+  onToggleAspect,
 }: {
-  aspects: string[]
-  elevations: string[]
+  cells: string[]
   color: string
   label?: string
   className?: string
+  onToggle?: (cell: string) => void
+  onToggleAspect?: (aspect: string) => void
 }) {
+  const editable = !!onToggle
   const bands = ELEVATION_BANDS.map((b) => b.key)
+  const labelled = editable ? ASPECTS : (['N', 'E', 'S', 'W'] as const)
+
   return (
-    <svg className={`rose ${className ?? ''}`} viewBox="-92 -92 184 184" role="img" aria-label={label ?? roseLabel(aspects, elevations)}>
+    <svg
+      className={`rose${editable ? ' rose-edit' : ''} ${className ?? ''}`}
+      viewBox="-92 -92 184 184"
+      role={editable ? 'group' : 'img'}
+      aria-label={label ?? roseLabel(cells)}
+    >
       {bands.map((band, b) =>
         ASPECTS.map((aspect, i) => {
-          const on = aspects.includes(aspect) && elevations.includes(band)
-          return (
+          const key = cellKey(aspect, band)
+          const on = cells.includes(key)
+          const d = sector(RADII[b], RADII[b + 1], i * 45 - 22.5, i * 45 + 22.5)
+          return editable ? (
             <path
-              key={`${band}-${aspect}`}
+              key={key}
               className="rose-cell"
-              d={sector(RADII[b], RADII[b + 1], i * 45 - 22.5, i * 45 + 22.5)}
+              d={d}
               fill={on ? color : BAND_TINTS[b]}
               stroke="#1c1f22"
               strokeWidth={0.7}
-            />
+              role="checkbox"
+              aria-checked={on}
+              aria-label={`${ASPECT_NAMES[aspect]}, ${bandLabel(band)}`}
+              tabIndex={0}
+              onClick={() => onToggle(key)}
+              onKeyDown={activate(() => onToggle(key))}
+            >
+              <title>{`${ASPECT_NAMES[aspect]}, ${bandLabel(band)}`}</title>
+            </path>
+          ) : (
+            <path key={key} className="rose-cell" d={d} fill={on ? color : BAND_TINTS[b]} stroke="#1c1f22" strokeWidth={0.7} />
           )
         }),
       )}
-      {(['N', 'E', 'S', 'W'] as const).map((a) => {
-        const [x, y] = point(83, ASPECTS.indexOf(a) * 45)
-        return (
-          <text key={a} x={x} y={y + 5} textAnchor="middle" className="rose-label">
+      {labelled.map((a) => {
+        const [x, y] = point(84, ASPECTS.indexOf(a) * 45)
+        const text = (
+          <text x={x} y={y + 5} textAnchor="middle" className="rose-label">
             {a}
           </text>
+        )
+        return onToggleAspect ? (
+          <g
+            key={a}
+            className="rose-aspect"
+            role="button"
+            tabIndex={0}
+            aria-label={`Toggle all of ${ASPECT_NAMES[a]}`}
+            onClick={() => onToggleAspect(a)}
+            onKeyDown={activate(() => onToggleAspect(a))}
+          >
+            <circle cx={x} cy={y} r={10} className="rose-aspect-hit" />
+            {text}
+          </g>
+        ) : (
+          <g key={a}>{text}</g>
         )
       })}
     </svg>

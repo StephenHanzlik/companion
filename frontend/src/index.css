@@ -1567,6 +1567,7 @@ legend {
 .problem-fields {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 96px;
+  align-content: start;
   gap: 0 12px;
 }
 
@@ -2220,6 +2221,107 @@ button.link-pick:hover {
   fill: var(--ov-ink);
 }
 
+/* Rose as the picker (Plan, avalanche problems) */
+.rose-picker {
+  width: 212px;
+  max-width: 100%;
+}
+
+.rose-edit .rose-label {
+  font-size: 13px;
+  fill: var(--ink);
+  pointer-events: none;
+}
+
+.rose-edit .rose-cell {
+  cursor: pointer;
+  outline: none;
+}
+
+.rose-edit .rose-cell:hover {
+  filter: brightness(0.9);
+}
+
+.rose-edit .rose-cell:focus-visible {
+  stroke-width: 2.6px;
+}
+
+.rose-aspect {
+  cursor: pointer;
+  outline: none;
+}
+
+.rose-aspect-hit {
+  fill: transparent;
+  transition: fill 120ms var(--ease);
+}
+
+.rose-aspect:hover .rose-aspect-hit {
+  fill: var(--rail);
+}
+
+.rose-aspect:focus-visible .rose-aspect-hit {
+  fill: var(--rail);
+  stroke: var(--ink);
+  stroke-width: 1.5px;
+}
+
+.band-toggles {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  margin-top: 8px;
+}
+
+.chip.band-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 28px;
+  padding: 0 8px;
+}
+
+.band-chip i {
+  width: 10px;
+  height: 10px;
+  border: 1px solid var(--ink);
+}
+
+.band-chip .band-0 {
+  background: #fff;
+}
+
+.band-chip .band-1 {
+  background: #eceeee;
+}
+
+.band-chip .band-2 {
+  background: #d7dbdc;
+}
+
+.band-chip[aria-pressed='true'] i {
+  border-color: #fff;
+}
+
+.band-clear {
+  margin-left: 6px;
+  font-size: 13px;
+}
+
+.band-clear:disabled {
+  opacity: 0.4;
+  text-decoration: none;
+}
+
+.rose-summary {
+  max-width: 212px;
+  margin-top: 6px;
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--ink-3);
+}
+
 /* --- Landing ------------------------------------------------------------- */
 
 .landing {
@@ -2664,7 +2766,9 @@ button.link-pick:hover {
   .problem-key {
     padding-top: 0;
     grid-auto-flow: column;
+    justify-content: start;
     align-items: center;
+    gap: 8px;
   }
 
   .problem-where {
