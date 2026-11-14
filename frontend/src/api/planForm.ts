@@ -212,8 +212,8 @@ export const PLAN_SECTIONS: { id: PlanSectionId; no: string; title: string; rule
     id: 'hazard',
     no: '2.0',
     title: 'Anticipate the hazard',
-    // {links} is where the source links read inline: "…saying at A or B, …"
-    rule: 'See what expert forecasters are saying{links}, and ask people who know the area.',
+    // {links} is where the source links read inline: "…saying at A or B."
+    rule: 'See what expert forecasters are saying{links}.',
     links: FORECAST_LINKS,
   },
   {
