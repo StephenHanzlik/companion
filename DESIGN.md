@@ -31,6 +31,7 @@ colors:
   band-near: "#eceeee"
   band-below: "#d7dbdc"
   debriefed-grey: "#8f969b"
+  scrim: "rgba(28, 31, 34, 0.55)"
 typography:
   display:
     fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, 'Helvetica Neue', Arial, sans-serif"
@@ -148,6 +149,26 @@ components:
   picker-chip-pressed:
     backgroundColor: "{colors.graphite}"
     textColor: "{colors.paper-white}"
+  band-chip:
+    backgroundColor: "{colors.paper-white}"
+    textColor: "{colors.graphite}"
+    rounded: "{rounded.hair}"
+    padding: "0 8px"
+    height: "28px"
+  band-chip-pressed:
+    backgroundColor: "{colors.graphite}"
+    textColor: "{colors.paper-white}"
+  source-link:
+    textColor: "{colors.graphite}"
+    typography: "{typography.label}"
+  dialog:
+    backgroundColor: "{colors.paper-white}"
+    textColor: "{colors.graphite}"
+    rounded: "{rounded.lg}"
+    width: "min(880px, calc(100vw - 32px))"
+  dialog-foot:
+    backgroundColor: "{colors.well}"
+    padding: "12px 20px"
   badge:
     backgroundColor: "{colors.well}"
     textColor: "{colors.graphite}"
@@ -174,7 +195,7 @@ Density is that of a working document, not a dashboard: 14px body, tabular figur
 - Cool stone ground, white hairline cards, graphite chrome, one lime accent.
 - System UI sans for everything; monospace only for record codes and measurements.
 - Tabular numerals globally.
-- Flat surfaces; shadow appears only on the open section card and the graphite overview card.
+- Flat surfaces; shadow appears only on the open section card, the graphite overview card and a modal dialog.
 - Shape carries status (square, dot, diamond); colour reinforces it.
 - The aspect-elevation rose is the signature graphic. In Plan it is the picker itself, and the overview copy redraws live from it.
 
@@ -183,7 +204,7 @@ Density is that of a working document, not a dashboard: 14px body, tabular figur
 A near-monochrome cool-grey sheet with one acid-lime signal and a separate four-colour palette reserved for avalanche problems.
 
 ### Primary
-- **Signal Lime** (`signal-lime`): the only accent. It has exactly five roles: done segments of the overview progress bar; the count chip on the open, in-progress section card; the Plan status mark; the primary call to action (accent button, including "Start a trip" and "Open trips"); the active top-bar underline and the wordmark dot. Pressed/hover state uses `signal-lime-pressed`.
+- **Signal Lime** (`signal-lime`): the only accent. It has exactly five roles: done segments of the overview progress bar; the count chip on the open, in-progress section card; the Plan status mark; the primary call to action (accent button, including "Start a trip" and "Open trips"); the active top-bar underline and the wordmark dot. Pressed/hover state uses `signal-lime-pressed`. Two system affordances also use it and are not roles: the focus outline on graphite surfaces (where a graphite outline would vanish) and text selection.
 
 ### Neutral
 - **Graphite** (`graphite`): primary text, the top bar, the overview card, the landing close band, the primary ink button, pressed picker chips, the selected segment of the Plan / Ride / Debrief control, and the ink rule that heads grouped rows.
@@ -192,6 +213,7 @@ A near-monochrome cool-grey sheet with one acid-lime signal and a separate four-
 - **Hairline / Hairline Soft** (`hairline`, `hairline-soft`): card borders and in-card row dividers respectively.
 - **Cool Stone** (`cool-stone`): the page ground. **Rail Stone** (`rail-stone`) is the trip rail, a half step darker. **Well** (`well`): inset fills for section rules, callouts, guidance and "why it matters" notes. **Paper White** (`paper-white`): cards and fields.
 - **Overview Ink / Muted / Rule** (`overview-ink`, `overview-muted`, `overview-rule`): text, secondary text and row rules on graphite surfaces.
+- **Scrim** (`scrim`): the backdrop behind a modal dialog, graphite at 55%.
 
 ### Semantic
 - **Done Green** (`done-green`): "Done" counts and saved confirmations.
@@ -218,7 +240,7 @@ A near-monochrome cool-grey sheet with one acid-lime signal and a separate four-
 - **Display** (800, clamp 42-66px, 1.02, -0.03em): the landing hero headline only, white over the photo's sky, capped at 11ch.
 - **Headline** (800, 40px, 1.08, -0.025em): landing section headings (34px for phase bands, 44px for the graphite close; 30-32px on narrow screens).
 - **Page title** (700, 28px, 1.15, -0.02em): the trip name in the workspace header.
-- **Title** (700, 15-17px): card titles (16px), section card titles (15px closed, 17px open), entry titles (15px), overview title (18px).
+- **Title** (700, 15-18px): card titles (16px), section card titles (15px closed, 17px open), entry titles (15px), overview and dialog titles (18px).
 - **Body** (400, 14px, 1.45, tabular): all app copy; prose is held to 62-75ch. Landing body runs at 16-19px.
 - **Label** (700, 13px): field labels and buttons.
 - **Group label** (700, 12px, 0.07em, uppercase): headings for groups of rows inside a card, the rail groups ("In progress", "Debriefed") and overview sub-lists. They head content; they never sit above a headline.
@@ -235,7 +257,9 @@ The app shell is a 56px sticky graphite top bar over a two-column page: a 272px 
 
 The work column is a stack of cards with a 10px gap. Section cards indent their body to a 72px left edge so content aligns past the section number.
 
-Responsive behaviour: below 1180px the overview card moves above the work (roses reflow to an auto-fill grid); below 900px the rail is hidden, the overview drops below the work, gutters go to 16px and multi-column rows stack; below 560px the segmented control goes full width and two-up field grids collapse.
+The Ride tab's stack opens with the folded Field reminders card, then the field record form and entries. The reminders body is two columns (departure check, then the Stay aware loop at 1 : 1.3, 28px gap) and is the same body the sign-off dialog shows.
+
+Responsive behaviour: below 1180px the overview card moves above the work (roses reflow to an auto-fill grid); below 900px the rail is hidden, the overview drops below the work, gutters go to 16px and multi-column rows stack, including the reminders body; below 560px the segmented control goes full width and two-up field grids collapse.
 
 The landing runs a full-bleed photo hero (viewport height minus the bar, 620-880px) with the copy left and an example overview card floating at the bottom right, then a 1240px wrap with a five-step flow strip, alternating phase bands (4:7 text to figure) and a graphite close band.
 
@@ -243,21 +267,22 @@ Spacing rhythm is 4/8/12/16/20/28 with in-between steps (6, 10, 14, 18, 22) used
 
 ## Elevation & Depth
 
-Flat by default. Depth comes from tone (stone ground, white cards, graphite chrome) and hairlines, not shadow. Three shadows exist and each has a single job.
+Flat by default. Depth comes from tone (stone ground, white cards, graphite chrome) and hairlines, not shadow. Four shadows exist and each has a single job.
 
 ### Shadow Vocabulary
 - **Open section** (`0 10px 28px -18px rgba(28,31,34,0.45)`): the one open section card, paired with an ink border.
 - **Overview** (`0 18px 40px -28px rgba(0,0,0,0.6)`): the graphite overview card; on the landing hero it deepens to `0 30px 60px -30px rgba(0,0,0,0.6), 0 2px 6px rgba(0,0,0,0.2)`.
+- **Dialog** (`0 30px 70px -30px rgba(0,0,0,0.55)`): a modal dialog, over the scrim, paired with an ink border.
 - **Figure** (`0 40px 80px -48px rgba(28,31,34,0.5)`): landing screenshot and example panels only.
 
 ### Named Rules
-**The Lift Means Focus Rule.** Only the open section and the overview card lift off the page in the app. Closed cards, inputs and rows stay flat.
+**The Lift Means Focus Rule.** Only the open section, the overview card and a modal dialog lift off the page in the app. Closed cards, inputs and rows stay flat.
 
 ## Shapes
 
-Small, square-ish corners throughout: 2px for picker chips, badges and tags; 3px for buttons, inputs, callouts and the segmented control; 4px for cards; 6px for the overview card and the landing flow strip; 8px for landing figures. The overview card carries a small punched hole (an 11px stone-coloured circle at its top right), like a sheet ready for a ring binder.
+Small, square-ish corners throughout: 2px for picker chips, badges and tags; 3px for buttons, inputs, callouts and the segmented control; 4px for cards; 6px for the overview card, the dialog and the landing flow strip; 8px for landing figures. The overview card carries a small punched hole (an 11px stone-coloured circle at its top right), like a sheet ready for a ring binder.
 
-Status is carried by shape: a 9px square for Plan (lime with an ink ring), a 9px graphite dot for Ride, an 8px grey diamond for Debriefed. Problem keys are 11px squares with an ink ring. Rows inside a card are divided by hairlines under a 1px graphite rule, never boxed.
+Status is carried by shape: a 9px square for Plan (lime with an ink ring), a 9px graphite dot for Ride, an 8px grey diamond for Debriefed. Problem keys are 11px squares with an ink ring; band swatches are 10px squares with an ink border. Rows inside a card are divided by hairlines under a 1px graphite rule, never boxed.
 
 ## Components
 
@@ -271,6 +296,10 @@ Compact, bold and square-cornered.
 - **Ghost on photo:** translucent navy fill with a 75% white border and white text, used only over the hero photo.
 - **Disabled:** 45% opacity. **Focus:** 2px graphite outline, 2px offset (lime outline on graphite surfaces).
 
+### Links
+One link grammar: graphite text with a 1px field-stroke underline at a 3px offset that darkens to graphite on hover (150ms). Text-button links (Clear, map toggles) are 600; source links are 700 and end in an 11px external icon in ink-muted.
+- **Inline source links:** a section rule can carry a `{links}` marker where its source links read inline in the sentence, joined with commas and a final "or" ("See what expert forecasters are saying at avalanche.org or avalanche.ca."). They open in a new tab. Links read as part of the prose, never as a separate list or button row.
+
 ### Inputs / Fields
 - **Style:** white fill, 1px field-stroke border, 3px radius, 36px min height, 14px text; labels above in 13px bold with inline muted help.
 - **Hover / Focus:** border darkens on hover; focus becomes a graphite border plus 1px graphite ring, no glow.
@@ -281,6 +310,10 @@ Compact, bold and square-cornered.
 - **Card:** white, 1px hairline border, 4px radius; head and foot bands at 14px x 20px separated by soft hairlines; body 20px.
 - **Section card (Plan):** a disclosure whose header row is mono section number, title, one-line summary, status count and chevron. Closed: plain card. Open: graphite border, the open-section shadow, larger title, lime count chip while incomplete, a well-filled rule line under the header, and a body indented to the title edge. Completed sections show a green "Done" check.
 - **Grouped rows:** avalanche problems, decision-point reflections and checklists sit inside a card as rows under a graphite top rule with hairline dividers between them.
+- **Folded card:** a `<details>` card (Field reminders) whose summary row is the card head with a chevron; open, a soft hairline separates it from the body.
+
+### Dialog
+A native modal `<dialog>`: white, 1px graphite border, 6px radius, up to 880px wide, over the scrim, with the dialog shadow and a 220ms rise (10px up, fading in). The head (18px x 20px, soft hairline below) holds an 18px title led by a done-green check, a muted help line, and an icon close button. The body scrolls inside the dialog. The foot is well-filled under a soft hairline, with muted help on the left and the actions on the right (quiet Close, then the ink primary action). A click on the backdrop closes it. The sign-off dialog shows the shared reminders body.
 
 ### Overview card (signature)
 The graphite summary that sits beside the work and is never editable: white title, muted meta with mono sheet number, the punched hole, a segmented progress bar (6px segments, 3px gaps: lime done, off-white current, rule-grey ahead), then label/value rows divided by graphite rules with muted empty values. Under the hazard section it shows one aspect-elevation rose per avalanche problem with a coloured key square and an elevation-band legend, and closes with a small note.
@@ -288,11 +321,11 @@ The graphite summary that sits beside the work and is never editable: white titl
 ### Aspect-elevation rose and pickers (signature)
 The rose draws eight aspects around and three elevation bands from the centre outward (above treeline in the middle, below treeline outside), cells stroked in graphite, unselected cells tinted by band, selected cells filled with that problem's colour; cell fills transition over 180ms. A problem's location is a set of individual cells (`NE:ALP`, `NE:NTL`), never an aspect list crossed with a band list, so a problem can sit on N and NE above treeline but only NE near treeline.
 
-In Plan the rose is the picker. Every cell is a focusable checkbox (click, Enter or Space toggles it, hover darkens it, focus thickens its stroke), the eight aspect letters toggle a whole wedge, and a row of ALP / NTL / BTL chips with band-tint swatches toggles a whole ring, followed by a Clear link and a plain-text summary ("Above treeline: N, NE. Near treeline: NE."). The overview card shows the same rose read-only with N, E, S, W only. Snow tests in Ride still pick a single aspect from a 3x3 compass of 36x30 chips laid out as on a map, with a graphite hub dot at the centre. Chips are white with a field-stroke border and turn graphite with white text when pressed.
+In Plan the rose is the picker, drawn 212px wide with graphite 13px aspect letters. Every cell is a focusable checkbox (click, Enter or Space toggles it, hover darkens it, focus thickens its stroke), the eight aspect letters toggle a whole wedge (hover or focus shades the letter's hit area rail-stone), and a row of 28px ALP / NTL / BTL band chips with band-tint swatches toggles a whole ring (pressed chips go graphite and the swatch border turns white), followed by a Clear link (disabled at 40% when empty) and a 12px muted plain-text summary announced politely ("Above treeline: N, NE. Near treeline: NE."). The overview card shows the same rose read-only with N, E, S, W only. Snow tests in Ride still pick a single aspect from a 3x3 compass of 36x30 chips laid out as on a map, with a graphite hub dot at the centre. Chips are white with a field-stroke border and turn graphite with white text when pressed.
 
 ### Navigation
 - **Top bar:** graphite, 56px, mountain mark plus "Companion." wordmark with a lime dot; links muted grey turning white on hover, the current page white with a 3px lime underline.
-- **Trip rail:** rail-stone column with a search field, uppercase group labels, and trip rows of mono trip number, bold title, muted date and phase, and a status mark at the right. The current trip is a white row with a 3px graphite left edge.
+- **Trip rail:** rail-stone column with a search field, uppercase group labels, and trip rows of mono trip number, bold title, muted date and phase, and a status mark at the right. Rows darken to rail-stone-hover on hover; the current trip is a white row.
 - **Phase control:** a graphite-outlined segmented control; the selected phase fills graphite with white text.
 
 ### Badges, callouts and field records
@@ -302,7 +335,7 @@ In Plan the rose is the picker. Every cell is a focusable checkbox (click, Enter
 - **Linked-entry pick:** a selectable row of mono code, title and time; pressed state takes a graphite border and graphite code.
 
 ### Icons
-One stroked set on a 24-unit grid at 1.75 stroke, 16px default, inheriting text colour.
+One stroked set on a 24-unit grid at 1.75 stroke, 16px default (11-18px in use), inheriting text colour. It includes an external-link glyph for links that leave the app.
 
 ## Do's and Don'ts
 
@@ -313,10 +346,11 @@ One stroked set on a 24-unit grid at 1.75 stroke, 16px default, inheriting text 
 - **Do** carry status with shape first (square, dot, diamond) and colour second.
 - **Do** keep the overview card graphite, read-only and beside the work, filling in as sections complete.
 - **Do** keep figures tabular.
+- **Do** put source links inline in the sentence that needs them, in the one link grammar, with the external icon.
 
 ### Don't:
 - **Don't** use coloured side stripes on cards, rows, callouts or entries.
 - **Don't** nest bordered cards inside cards.
 - **Don't** give phase marks a colour from the avalanche-problem palette (sky, sand, rose).
-- **Don't** add shadows to closed cards, rows or inputs; lift is reserved for the open section and the overview card.
+- **Don't** add shadows to closed cards, rows or inputs; lift is reserved for the open section, the overview card and a modal dialog.
 - **Don't** use monospace for prose, labels or headings.
