@@ -168,7 +168,7 @@ components:
 
 Every trip reads like a technical spec sheet drawn with a Swiss topographic sheet's rigor. The ground is cool stone, the work happens in self-contained white cards with hairline borders, and one graphite overview card summarizes the trip in the margin the way a sheet's legend does. The chrome (top bar, overview card, landing close) is graphite; the paper is white; a single signal lime marks what is done, current or ready to start.
 
-Density is that of a working document, not a dashboard: 14px body, tabular figures everywhere, numbered sections (1.0 to 5.0), record codes (OBS-01, TEST-01, NOTE-01) and sheet numbers set in monospace. The map-sheet vocabulary arrives through the aspect-elevation rose, the 3x3 compass picker and the section numbering, not through decoration. The system rejects the generic SaaS sidebar-and-cards look and the endless scrolling form: work is broken into cards you open one at a time while the overview fills in.
+Density is that of a working document, not a dashboard: 14px body, tabular figures everywhere, numbered sections (1.0 to 5.0), record codes (OBS-01, TEST-01, NOTE-01) and sheet numbers set in monospace. The map-sheet vocabulary arrives through the aspect-elevation rose (which is also the picker), the 3x3 compass picker for snow-test aspect, and the section numbering, not through decoration. The system rejects the generic SaaS sidebar-and-cards look and the endless scrolling form: work is broken into cards you open one at a time while the overview fills in.
 
 **Key Characteristics:**
 - Cool stone ground, white hairline cards, graphite chrome, one lime accent.
@@ -176,7 +176,7 @@ Density is that of a working document, not a dashboard: 14px body, tabular figur
 - Tabular numerals globally.
 - Flat surfaces; shadow appears only on the open section card and the graphite overview card.
 - Shape carries status (square, dot, diamond); colour reinforces it.
-- The aspect-elevation rose is the signature graphic and redraws live from the pickers.
+- The aspect-elevation rose is the signature graphic. In Plan it is the picker itself, and the overview copy redraws live from it.
 
 ## Colors
 
@@ -286,7 +286,9 @@ Compact, bold and square-cornered.
 The graphite summary that sits beside the work and is never editable: white title, muted meta with mono sheet number, the punched hole, a segmented progress bar (6px segments, 3px gaps: lime done, off-white current, rule-grey ahead), then label/value rows divided by graphite rules with muted empty values. Under the hazard section it shows one aspect-elevation rose per avalanche problem with a coloured key square and an elevation-band legend, and closes with a small note.
 
 ### Aspect-elevation rose and pickers (signature)
-The rose draws eight aspects around and three elevation bands from the centre outward, cells stroked in graphite, unselected cells tinted by band, selected cells filled with that problem's colour; cell fills transition over 180ms. It redraws live from two pickers: a 3x3 compass of 36x30 chips laid out as on a map, with a graphite hub dot at the centre, and a vertical stack of ALP / NTL / BTL chips. Chips are white with a field-stroke border and turn graphite with white text when pressed.
+The rose draws eight aspects around and three elevation bands from the centre outward (above treeline in the middle, below treeline outside), cells stroked in graphite, unselected cells tinted by band, selected cells filled with that problem's colour; cell fills transition over 180ms. A problem's location is a set of individual cells (`NE:ALP`, `NE:NTL`), never an aspect list crossed with a band list, so a problem can sit on N and NE above treeline but only NE near treeline.
+
+In Plan the rose is the picker. Every cell is a focusable checkbox (click, Enter or Space toggles it, hover darkens it, focus thickens its stroke), the eight aspect letters toggle a whole wedge, and a row of ALP / NTL / BTL chips with band-tint swatches toggles a whole ring, followed by a Clear link and a plain-text summary ("Above treeline: N, NE. Near treeline: NE."). The overview card shows the same rose read-only with N, E, S, W only. Snow tests in Ride still pick a single aspect from a 3x3 compass of 36x30 chips laid out as on a map, with a graphite hub dot at the centre. Chips are white with a field-stroke border and turn graphite with white text when pressed.
 
 ### Navigation
 - **Top bar:** graphite, 56px, mountain mark plus "Companion." wordmark with a lime dot; links muted grey turning white on hover, the current page white with a 3px lime underline.

@@ -18,8 +18,8 @@ const FLOW = [
 // Example content for the hero card and the Ride / Debrief panels. Marked as
 // examples on the page; none of it is a real trip.
 const EXAMPLE_PROBLEMS = [
-  { name: 'Wind slab', aspects: ['N', 'NE', 'E'], elevations: ['ALP', 'NTL'] },
-  { name: 'Persistent slab', aspects: ['NW', 'N', 'NE'], elevations: ['NTL'] },
+  { name: 'Wind slab', cells: ['N:ALP', 'NE:ALP', 'E:ALP', 'NE:NTL', 'E:NTL'] },
+  { name: 'Persistent slab', cells: ['NW:NTL', 'N:NTL', 'NE:NTL', 'N:BTL'] },
 ]
 
 function Phase({
@@ -80,7 +80,7 @@ export default function Landing({ onStartTrip }: Props) {
               <div className="ov-rose-grid">
                 {EXAMPLE_PROBLEMS.map((p, i) => (
                   <figure key={p.name} className="ov-rose">
-                    <Rose aspects={p.aspects} elevations={p.elevations} color={problemColor(i)} />
+                    <Rose cells={p.cells} color={problemColor(i)} />
                     <figcaption>
                       <i style={{ background: problemColor(i) }} aria-hidden="true" />
                       {p.name}
