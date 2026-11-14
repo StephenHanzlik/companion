@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-11-13T22:00:29.880872+00:00",
+  "generatedAt": "2026-11-14T14:10:25.464640+00:00",
   "title": "Design System: Companion",
   "extensions": {
     "colorMeta": {
@@ -113,6 +113,11 @@
         "role": "neutral",
         "displayName": "Debriefed Grey",
         "canonical": "#8f969b"
+      },
+      "scrim": {
+        "role": "neutral",
+        "displayName": "Scrim",
+        "canonical": "rgba(28, 31, 34, 0.55)"
       }
     },
     "typographyMeta": {
@@ -130,7 +135,7 @@
       },
       "title": {
         "displayName": "Title",
-        "purpose": "Card, section, entry and overview titles."
+        "purpose": "Card, section, entry, overview and dialog titles."
       },
       "body": {
         "displayName": "Body",
@@ -166,6 +171,11 @@
         "purpose": "The example overview card floating over the landing hero photo."
       },
       {
+        "name": "dialog",
+        "value": "0 30px 70px -30px rgba(0,0,0,0.55)",
+        "purpose": "A modal dialog over the scrim, with an ink border."
+      },
+      {
         "name": "figure",
         "value": "0 40px 80px -48px rgba(28,31,34,0.5)",
         "purpose": "Landing screenshot and example panels."
@@ -181,6 +191,11 @@
         "name": "rose-cell",
         "value": "fill 180ms",
         "purpose": "Rose cells recolour as the pickers change."
+      },
+      {
+        "name": "dialog-rise",
+        "value": "220ms, 10px up with fade",
+        "purpose": "A modal dialog opening."
       },
       {
         "name": "reduced-motion",
@@ -261,11 +276,34 @@
       "css": ".ds-ov{position:relative;width:300px;padding:20px 20px 16px;border-radius:6px;background:#1c1f22;color:#f4f4f1;box-shadow:0 18px 40px -28px rgba(0,0,0,0.6);font:14px/1.45 -apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;font-variant-numeric:tabular-nums}.ds-hole{position:absolute;top:16px;right:18px;width:11px;height:11px;border-radius:50%;background:#f1f2f1}.ds-ov h2{margin:0;font-size:18px;color:#fff}.ds-meta{margin:4px 0 0;font-size:13px;color:#a9afb3}.ds-mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#f4f4f1}.ds-bar{display:flex;gap:3px;margin-top:16px}.ds-bar i{flex:1;height:6px;background:#363a3e}.ds-bar i.d{background:#d6f25c}.ds-bar i.c{background:#f4f4f1}.ds-ov dl{margin:14px 0 0}.ds-ov dl div{display:flex;justify-content:space-between;padding:8px 0;border-top:1px solid #363a3e;font-size:13px}.ds-ov dt{color:#a9afb3}.ds-ov dd{margin:0;font-weight:700}.ds-ov dd.e{font-weight:400;color:#a9afb3}"
     },
     {
+      "name": "Rose Picker Band Chips",
+      "kind": "custom",
+      "description": "Under the rose picker: ALP / NTL / BTL chips toggle a whole ring; Clear link and a muted text summary follow.",
+      "html": "<div class=\"ds-bands\"><button class=\"ds-band\" aria-pressed=\"true\"><i style=\"background:#fff\"></i>ALP</button><button class=\"ds-band\"><i style=\"background:#eceeee\"></i>NTL</button><button class=\"ds-band\"><i style=\"background:#d7dbdc\"></i>BTL</button><button class=\"ds-linkbtn\">Clear</button></div><p class=\"ds-rsum\">Above treeline: N, NE. Near treeline: NE.</p>",
+      "css": ".ds-bands{display:flex;flex-wrap:wrap;align-items:center;gap:4px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif}.ds-band{display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 8px;border:1px solid #8c9295;border-radius:2px;background:#fff;color:#1c1f22;font:700 12px -apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;cursor:pointer;transition:background-color 120ms,color 120ms}.ds-band:hover{border-color:#1c1f22}.ds-band:focus-visible{outline:2px solid #1c1f22;outline-offset:2px}.ds-band i{width:10px;height:10px;border:1px solid #1c1f22}.ds-band[aria-pressed=true]{background:#1c1f22;border-color:#1c1f22;color:#fff}.ds-band[aria-pressed=true] i{border-color:#fff}.ds-linkbtn{margin-left:6px;padding:0;border:0;background:none;color:#1c1f22;font:600 13px -apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;text-decoration:underline;text-decoration-color:#8c9295;text-underline-offset:3px;cursor:pointer}.ds-linkbtn:hover{text-decoration-color:#1c1f22}.ds-rsum{max-width:212px;margin:6px 0 0;font:12px/1.45 -apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;color:#5c6267}"
+    },
+    {
       "name": "Compass Picker",
       "kind": "custom",
-      "description": "3x3 aspect chips laid out as on a map; pressed chips go graphite.",
+      "description": "3x3 aspect chips laid out as on a map for snow-test aspect in Ride; pressed chips go graphite.",
       "html": "<div class=\"ds-compass\"><button class=\"ds-chip\">NW</button><button class=\"ds-chip\" aria-pressed=\"true\">N</button><button class=\"ds-chip\" aria-pressed=\"true\">NE</button><button class=\"ds-chip\">W</button><span class=\"ds-hub\"></span><button class=\"ds-chip\" aria-pressed=\"true\">E</button><button class=\"ds-chip\">SW</button><button class=\"ds-chip\">S</button><button class=\"ds-chip\">SE</button></div>",
       "css": ".ds-compass{display:grid;grid-template-columns:repeat(3,36px);grid-template-rows:repeat(3,30px);gap:3px}.ds-chip{display:grid;place-items:center;padding:0;border:1px solid #8c9295;border-radius:2px;background:#fff;color:#1c1f22;font:700 12px -apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;cursor:pointer;transition:background-color 120ms,color 120ms}.ds-chip:hover{border-color:#1c1f22}.ds-chip[aria-pressed=true]{background:#1c1f22;border-color:#1c1f22;color:#fff}.ds-chip:focus-visible{outline:2px solid #1c1f22;outline-offset:2px}.ds-hub{display:grid;place-items:center}.ds-hub::after{content:'';width:5px;height:5px;border-radius:50%;background:#1c1f22}"
+    },
+    {
+      "name": "Inline Source Link",
+      "kind": "custom",
+      "refersTo": "source-link",
+      "description": "Section-rule sentence with source links read inline; bold ink, field-stroke underline that darkens on hover, external icon.",
+      "html": "<p class=\"ds-srule\">See what expert forecasters are saying at <a class=\"ds-src\" href=\"#\">avalanche.org<svg width=\"11\" height=\"11\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M14 5h5v5M19 5l-8 8M17 14v4a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1h4\"/></svg></a> or <a class=\"ds-src\" href=\"#\">avalanche.ca<svg width=\"11\" height=\"11\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M14 5h5v5M19 5l-8 8M17 14v4a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1h4\"/></svg></a>.</p>",
+      "css": ".ds-srule{margin:0;padding:10px 20px;background:#f6f7f6;border-top:1px solid #e8eae9;border-bottom:1px solid #e8eae9;font:13px/1.45 -apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;color:#454b50}.ds-src{display:inline-flex;align-items:center;gap:3px;color:#1c1f22;font-weight:700;text-decoration:underline;text-decoration-color:#8c9295;text-decoration-thickness:1px;text-underline-offset:3px;transition:text-decoration-color 150ms cubic-bezier(0.16,1,0.3,1)}.ds-src svg{color:#5c6267}.ds-src:hover{text-decoration-color:#1c1f22}.ds-src:focus-visible{outline:2px solid #1c1f22;outline-offset:2px}"
+    },
+    {
+      "name": "Dialog",
+      "kind": "card",
+      "refersTo": "dialog",
+      "description": "Native modal: ink border, 6px radius, green-check title, scrolling body, well-tinted foot with Close and the primary action.",
+      "html": "<div class=\"ds-dlg\"><div class=\"ds-dh\"><div><h2><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M5 12.5l4.5 4.5L19 7.5\"/></svg>Plan signed off</h2><p>Copy the essentials into your field book.</p></div></div><div class=\"ds-db\">Departure check and the Stay aware loop.</div><div class=\"ds-df\"><span>These stay on the Ride tab under Field reminders.</span><span><button class=\"ds-q\">Close</button><button class=\"ds-p\">Go to Ride</button></span></div></div>",
+      "css": ".ds-dlg{max-width:560px;border:1px solid #1c1f22;border-radius:6px;background:#fff;color:#1c1f22;box-shadow:0 30px 70px -30px rgba(0,0,0,0.55);font:14px/1.45 -apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;animation:ds-rise 220ms cubic-bezier(0.16,1,0.3,1)}@keyframes ds-rise{from{opacity:0;transform:translateY(10px)}}.ds-dh{padding:18px 20px 14px;border-bottom:1px solid #e8eae9}.ds-dh h2{display:flex;align-items:center;gap:8px;margin:0 0 4px;font-size:18px}.ds-dh h2 svg{color:#3d6a12}.ds-dh p,.ds-df>span:first-child{margin:0;font-size:13px;color:#5c6267}.ds-db{padding:20px;max-height:200px;overflow-y:auto}.ds-df{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px 16px;padding:12px 20px;border-top:1px solid #e8eae9;background:#f6f7f6}.ds-df button{height:36px;padding:0 14px;border-radius:3px;font:700 13px -apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;cursor:pointer;margin-left:8px}.ds-q{border:1px solid #8c9295;background:#fff;color:#1c1f22}.ds-q:hover{border-color:#1c1f22}.ds-p{border:1px solid transparent;background:#1c1f22;color:#fff}.ds-p:hover{background:#33383c}.ds-df button:focus-visible{outline:2px solid #1c1f22;outline-offset:2px}"
     },
     {
       "name": "Status Marks",
@@ -285,14 +323,14 @@
   ],
   "narrative": {
     "northStar": "The Trip Spec Sheet",
-    "overview": "Every trip reads like a technical spec sheet drawn with a Swiss topographic sheet's rigor. The ground is cool stone, the work happens in self-contained white cards with hairline borders, and one graphite overview card summarizes the trip in the margin the way a sheet's legend does. The chrome (top bar, overview card, landing close) is graphite; the paper is white; a single signal lime marks what is done, current or ready to start.\n\nDensity is that of a working document, not a dashboard: 14px body, tabular figures everywhere, numbered sections (1.0 to 5.0), record codes (OBS-01, TEST-01, NOTE-01) and sheet numbers set in monospace. The map-sheet vocabulary arrives through the aspect-elevation rose, the 3x3 compass picker and the section numbering, not through decoration. The system rejects the generic SaaS sidebar-and-cards look and the endless scrolling form: work is broken into cards you open one at a time while the overview fills in.",
+    "overview": "Every trip reads like a technical spec sheet drawn with a Swiss topographic sheet's rigor. The ground is cool stone, the work happens in self-contained white cards with hairline borders, and one graphite overview card summarizes the trip in the margin the way a sheet's legend does. The chrome (top bar, overview card, landing close) is graphite; the paper is white; a single signal lime marks what is done, current or ready to start.\n\nDensity is that of a working document, not a dashboard: 14px body, tabular figures everywhere, numbered sections (1.0 to 5.0), record codes (OBS-01, TEST-01, NOTE-01) and sheet numbers set in monospace. The map-sheet vocabulary arrives through the aspect-elevation rose (which is also the picker), the 3x3 compass picker for snow-test aspect, and the section numbering, not through decoration. The system rejects the generic SaaS sidebar-and-cards look and the endless scrolling form: work is broken into cards you open one at a time while the overview fills in.",
     "keyCharacteristics": [
       "Cool stone ground, white hairline cards, graphite chrome, one lime accent.",
       "System UI sans for everything; monospace only for record codes and measurements.",
       "Tabular numerals globally.",
-      "Flat surfaces; shadow appears only on the open section card and the graphite overview card.",
+      "Flat surfaces; shadow appears only on the open section card, the graphite overview card and a modal dialog.",
       "Shape carries status (square, dot, diamond); colour reinforces it.",
-      "The aspect-elevation rose is the signature graphic and redraws live from the pickers."
+      "The aspect-elevation rose is the signature graphic. In Plan it is the picker itself, and the overview copy redraws live from it."
     ],
     "rules": [
       {
@@ -317,7 +355,7 @@
       },
       {
         "name": "The Lift Means Focus Rule",
-        "body": "Only the open section and the overview card lift off the page in the app. Closed cards, inputs and rows stay flat.",
+        "body": "Only the open section, the overview card and a modal dialog lift off the page in the app. Closed cards, inputs and rows stay flat.",
         "section": "elevation"
       }
     ],
@@ -327,13 +365,14 @@
       "**Do** group items inside a card as hairline-divided rows under a 1px graphite rule.",
       "**Do** carry status with shape first (square, dot, diamond) and colour second.",
       "**Do** keep the overview card graphite, read-only and beside the work, filling in as sections complete.",
-      "**Do** keep figures tabular."
+      "**Do** keep figures tabular.",
+      "**Do** put source links inline in the sentence that needs them, in the one link grammar, with the external icon."
     ],
     "donts": [
       "**Don't** use coloured side stripes on cards, rows, callouts or entries.",
       "**Don't** nest bordered cards inside cards.",
       "**Don't** give phase marks a colour from the avalanche-problem palette (sky, sand, rose).",
-      "**Don't** add shadows to closed cards, rows or inputs; lift is reserved for the open section and the overview card.",
+      "**Don't** add shadows to closed cards, rows or inputs; lift is reserved for the open section, the overview card and a modal dialog.",
       "**Don't** use monospace for prose, labels or headings."
     ]
   }
