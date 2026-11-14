@@ -47,7 +47,7 @@ export function SectionCard({
           {rule && (
             <div className="section-rule">
               <p>{rule}</p>
-              {links && links.length > 0 && <SourceLinks label="Find your forecast" links={links} />}
+              {links && links.length > 0 && <SourceLinks label="Avalanche forecasts" links={links} />}
             </div>
           )}
           <div className="section-body">{children}</div>
@@ -148,19 +148,19 @@ export function SavedAt({ at, where }: { at: string | null; where?: string }) {
 // External sources for a section, e.g. where to read the avalanche forecast.
 export function SourceLinks({ label, links }: { label: string; links: SourceLink[] }) {
   return (
-    <p className="source-links">
-      <span>{label}:</span>
-      {links.map((l, i) => (
-        <span key={l.href}>
-          <a href={l.href} target="_blank" rel="noopener noreferrer">
+    <ul className="source-links" aria-label={label}>
+      {links.map((l) => (
+        <li key={l.href}>
+          <a href={l.href} target="_blank" rel="noopener noreferrer" title={`${l.region} avalanche forecasts`}>
             {l.label}
             <Icon name="external" size={12} />
-            <span className="sr-only"> (opens in a new tab)</span>
-          </a>{' '}
-          <span className="source-region">({l.region})</span>
-          {i < links.length - 1 && <span aria-hidden="true"> · </span>}
-        </span>
+            <span className="sr-only">
+              {' '}
+              ({l.region} forecasts, opens in a new tab)
+            </span>
+          </a>
+        </li>
       ))}
-    </p>
+    </ul>
   )
 }

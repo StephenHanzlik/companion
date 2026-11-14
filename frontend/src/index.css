@@ -1508,9 +1508,9 @@ legend {
 .section-rule {
   display: flex;
   flex-wrap: wrap;
-  align-items: baseline;
+  align-items: center;
   justify-content: space-between;
-  gap: 4px 20px;
+  gap: 8px 20px;
   padding: 10px 20px 10px 72px;
   background: var(--well);
   border-top: 1px solid var(--line-soft);
@@ -1519,31 +1519,45 @@ legend {
   color: var(--ink-2);
 }
 
+.section-rule p {
+  flex: 1 1 260px;
+}
+
 .source-links {
   display: flex;
   flex-wrap: wrap;
-  align-items: baseline;
-  gap: 4px 8px;
-  color: var(--ink-3);
+  gap: 6px;
+  margin: -3px 0;
+  padding: 0;
+  list-style: none;
 }
 
 .source-links a {
   display: inline-flex;
   align-items: center;
-  gap: 3px;
+  gap: 5px;
+  height: 26px;
+  padding: 0 9px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
   color: var(--ink);
+  font-size: 12px;
   font-weight: 700;
-  text-decoration: underline;
-  text-decoration-color: var(--field);
-  text-underline-offset: 3px;
+  text-decoration: none;
+  transition: border-color 150ms var(--ease);
+}
+
+.source-links a svg {
+  color: var(--ink-3);
 }
 
 .source-links a:hover {
-  text-decoration-color: var(--ink);
+  border-color: var(--ink);
 }
 
-.source-region {
-  color: var(--ink-3);
+.source-links a:hover svg {
+  color: var(--ink);
 }
 
 .section-body {

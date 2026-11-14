@@ -353,7 +353,7 @@ export default function PlanTab({ trip, sheet, header, onStatusChange, onGoTo }:
         {/* 2.0 Hazard */}
         <div id={`${ids}-hazard`} className="anchor">
           <SectionCard {...cardProps('hazard')}>
-            <Field label="Weather factors" help="— snowfall, wind, drifting snow, warming; the forecast above covers recent weather" htmlFor={`${ids}-wx`}>
+            <Field label="Weather factors" help="— snowfall, wind, drifting snow, warming" htmlFor={`${ids}-wx`}>
               <textarea id={`${ids}-wx`} className="input" rows={3} value={form.weather_factors} onChange={(e) => update('weather_factors', e.target.value)} />
             </Field>
 
