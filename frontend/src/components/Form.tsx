@@ -44,12 +44,7 @@ export function SectionCard({
       </h2>
       {open && (
         <div id={bodyId}>
-          {rule && (
-            <div className="section-rule">
-              <p>{rule}</p>
-              {links && links.length > 0 && <SourceLinks label="Avalanche forecasts" links={links} />}
-            </div>
-          )}
+          {rule && <p className="section-rule">{withLinks(rule, links)}</p>}
           <div className="section-body">{children}</div>
           {footer && <div className="section-foot">{footer}</div>}
         </div>
@@ -145,22 +140,26 @@ export function SavedAt({ at, where }: { at: string | null; where?: string }) {
   )
 }
 
-// External sources for a section, e.g. where to read the avalanche forecast.
-export function SourceLinks({ label, links }: { label: string; links: SourceLink[] }) {
+// A section prompt with its source links read inline at "{links}":
+// "Read the local avalanche advisory at avalanche.org or avalanche.ca."
+function withLinks(rule: string, links?: SourceLink[]): ReactNode {
+  const [before, after] = rule.split('{links}')
+  if (after === undefined) return rule
+  if (!links || links.length === 0) return before + after
   return (
-    <ul className="source-links" aria-label={label}>
-      {links.map((l) => (
-        <li key={l.href}>
-          <a href={l.href} target="_blank" rel="noopener noreferrer" title={`${l.region} avalanche forecasts`}>
+    <>
+      {before} at{' '}
+      {links.map((l, i) => (
+        <span key={l.href}>
+          {i > 0 && (i === links.length - 1 ? ' or ' : ', ')}
+          <a className="source-link" href={l.href} target="_blank" rel="noopener noreferrer" title={`${l.region} avalanche forecasts`}>
             {l.label}
-            <Icon name="external" size={12} />
-            <span className="sr-only">
-              {' '}
-              ({l.region} forecasts, opens in a new tab)
-            </span>
+            <Icon name="external" size={11} />
+            <span className="sr-only"> ({l.region} forecasts, opens in a new tab)</span>
           </a>
-        </li>
+        </span>
       ))}
-    </ul>
+      {after}
+    </>
   )
 }

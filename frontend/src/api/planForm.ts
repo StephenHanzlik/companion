@@ -212,7 +212,8 @@ export const PLAN_SECTIONS: { id: PlanSectionId; no: string; title: string; rule
     id: 'hazard',
     no: '2.0',
     title: 'Anticipate the hazard',
-    rule: 'Read the local avalanche advisory. Get expert opinion.',
+    // {links} is where the source links read inline: "…advisory at A or B."
+    rule: 'Read the local avalanche advisory{links}. Get expert opinion.',
     links: FORECAST_LINKS,
   },
   {
