@@ -1965,6 +1965,78 @@ button.link-pick:hover {
   font-size: 12px;
 }
 
+/* Sign-off dialog */
+.dialog {
+  width: min(880px, calc(100vw - 32px));
+  max-height: calc(100vh - 48px);
+  padding: 0;
+  border: 1px solid var(--ink);
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: 0 30px 70px -30px rgba(0, 0, 0, 0.55);
+}
+
+.dialog[open] {
+  display: flex;
+  flex-direction: column;
+  animation: dialog-in 220ms var(--ease);
+}
+
+.dialog .reminders-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.reminders-body .departure > .subhead,
+.reminders-body .stay-aware > .subhead {
+  margin-top: 0;
+}
+
+.dialog::backdrop {
+  background: rgba(28, 31, 34, 0.55);
+}
+
+@keyframes dialog-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
+.dialog-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 20px 14px;
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.dialog-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+  font-size: 18px;
+}
+
+.dialog-title svg {
+  color: var(--ok);
+}
+
+.dialog-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px 16px;
+  padding: 12px 20px;
+  border-top: 1px solid var(--line-soft);
+  background: var(--well);
+}
+
 /* --- Overview card ------------------------------------------------------- */
 
 .overview {
