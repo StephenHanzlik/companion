@@ -1506,12 +1506,44 @@ legend {
 }
 
 .section-rule {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 4px 20px;
   padding: 10px 20px 10px 72px;
   background: var(--well);
   border-top: 1px solid var(--line-soft);
   border-bottom: 1px solid var(--line-soft);
   font-size: 13px;
   color: var(--ink-2);
+}
+
+.source-links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 8px;
+  color: var(--ink-3);
+}
+
+.source-links a {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  color: var(--ink);
+  font-weight: 700;
+  text-decoration: underline;
+  text-decoration-color: var(--field);
+  text-underline-offset: 3px;
+}
+
+.source-links a:hover {
+  text-decoration-color: var(--ink);
+}
+
+.source-region {
+  color: var(--ink-3);
 }
 
 .section-body {
