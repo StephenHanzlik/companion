@@ -1,4 +1,5 @@
 import { ReactNode, useId } from 'react'
+import type { SourceLink } from '../api/planForm'
 import Icon from './Icon'
 
 // Shared pieces for the phase forms: section cards, labelled fields, and
@@ -10,6 +11,7 @@ export function SectionCard({
   status,
   summary,
   rule,
+  links,
   open,
   onOpen,
   footer,
@@ -20,6 +22,7 @@ export function SectionCard({
   status: ReactNode
   summary?: string
   rule?: string
+  links?: SourceLink[]
   open: boolean
   onOpen: () => void
   footer?: ReactNode
@@ -41,7 +44,7 @@ export function SectionCard({
       </h2>
       {open && (
         <div id={bodyId}>
-          {rule && <p className="section-rule">{rule}</p>}
+          {rule && <p className="section-rule">{withLinks(rule, links)}</p>}
           <div className="section-body">{children}</div>
           {footer && <div className="section-foot">{footer}</div>}
         </div>
@@ -134,5 +137,29 @@ export function SavedAt({ at, where }: { at: string | null; where?: string }) {
       Saved {time}
       {where ? ` · ${where}` : ''}
     </span>
+  )
+}
+
+// A section prompt with its source links read inline at "{links}":
+// "See what expert forecasters are saying at avalanche.org or avalanche.ca."
+function withLinks(rule: string, links?: SourceLink[]): ReactNode {
+  const [before, after] = rule.split('{links}')
+  if (after === undefined) return rule
+  if (!links || links.length === 0) return before + after
+  return (
+    <>
+      {before} at{' '}
+      {links.map((l, i) => (
+        <span key={l.href}>
+          {i > 0 && (i === links.length - 1 ? ' or ' : ', ')}
+          <a className="source-link" href={l.href} target="_blank" rel="noopener noreferrer" title={`${l.region} avalanche forecasts`}>
+            {l.label}
+            <Icon name="external" size={11} />
+            <span className="sr-only"> ({l.region} forecasts, opens in a new tab)</span>
+          </a>
+        </span>
+      ))}
+      {after}
+    </>
   )
 }

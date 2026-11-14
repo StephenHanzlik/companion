@@ -1514,6 +1514,27 @@ legend {
   color: var(--ink-2);
 }
 
+.source-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  color: var(--ink);
+  font-weight: 700;
+  text-decoration: underline;
+  text-decoration-color: var(--field);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  transition: text-decoration-color 150ms var(--ease);
+}
+
+.source-link svg {
+  color: var(--ink-3);
+}
+
+.source-link:hover {
+  text-decoration-color: var(--ink);
+}
+
 .section-body {
   padding: 22px 22px 6px 72px;
   border-top: 1px solid var(--line-soft);

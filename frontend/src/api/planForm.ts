@@ -194,13 +194,27 @@ export const emptyPlanningForm = (): PlanningForm => ({
 
 export type PlanSectionId = 'group' | 'hazard' | 'terrain' | 'emergency' | 'confidence'
 
-export const PLAN_SECTIONS: { id: PlanSectionId; no: string; title: string; rule?: string }[] = [
+// Where to find the information a section asks for. Opened in a new tab.
+export interface SourceLink {
+  label: string
+  href: string
+  region: string
+}
+
+export const FORECAST_LINKS: SourceLink[] = [
+  { label: 'avalanche.org', href: 'https://avalanche.org/', region: 'US' },
+  { label: 'avalanche.ca', href: 'https://avalanche.ca/map', region: 'Canada' },
+]
+
+export const PLAN_SECTIONS: { id: PlanSectionId; no: string; title: string; rule?: string; links?: SourceLink[] }[] = [
   { id: 'group', no: '1.0', title: 'Assemble your group' },
   {
     id: 'hazard',
     no: '2.0',
     title: 'Anticipate the hazard',
-    rule: 'Read the local avalanche advisory. Get expert opinion.',
+    // {links} is where the source links read inline: "…saying at A or B."
+    rule: 'See what expert forecasters are saying{links}.',
+    links: FORECAST_LINKS,
   },
   {
     id: 'terrain',

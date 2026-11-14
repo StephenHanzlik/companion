@@ -264,6 +264,7 @@ export default function PlanTab({ trip, sheet, header, onStatusChange, onGoTo }:
       no: s.no,
       title: s.title,
       rule: s.rule,
+      links: s.links,
       status: <Count done={p.done} total={p.total} />,
       summary: sectionSummary(form, id),
       open: open === id,
